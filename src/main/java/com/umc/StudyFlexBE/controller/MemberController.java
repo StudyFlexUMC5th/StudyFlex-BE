@@ -1,6 +1,7 @@
 package com.umc.StudyFlexBE.controller;
 
 
+import com.umc.StudyFlexBE.dto.request.LoginDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
@@ -48,9 +49,21 @@ public class MemberController {
         }
     }
 
+    @PostMapping("/login")
+    public BaseResponse<?> login(@RequestBody LoginDto loginDto) {
+        try {
+
+            String token = memberService.login(loginDto);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
     @GetMapping("testauth")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public BaseResponse<?> test() {
+
         return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "굿");
     }
 }
