@@ -3,6 +3,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.SignUpDto;
 import com.umc.StudyFlexBE.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,7 @@ public class MemberController {
 
 
     @PostMapping("/signUp")
-    public String signUp(@RequestBody SignUpDto signUpDto) {
+    public String signUp(@RequestBody @Valid SignUpDto signUpDto) {
         try{
             memberService.signUp(signUpDto);
 

@@ -2,10 +2,9 @@ package com.umc.StudyFlexBE.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 
 @Getter
@@ -14,10 +13,13 @@ public class SignUpDto {
 
     @JsonProperty
     @NotNull
+    @Size(min = 10 , max = 100, message = "이메일은 10글자 이상 100글자 이하여야 합니다.")
     private String email;
+
 
     @JsonProperty
     @NotNull
+    @Size(min = 10, max = 100, message = "비밀번호는 10글자 이상 100글자 이하여야 합니다.")
     private String password;
 
 
