@@ -4,10 +4,8 @@ package com.umc.StudyFlexBE.service;
 import static com.umc.StudyFlexBE.entity.MemberType.*;
 import static com.umc.StudyFlexBE.entity.Role.*;
 
-import com.umc.StudyFlexBE.dto.SignUpDto;
+import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.entity.Member;
-import com.umc.StudyFlexBE.entity.MemberType;
-import com.umc.StudyFlexBE.entity.Role;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,10 @@
 package com.umc.StudyFlexBE.controller;
 
 
-import com.umc.StudyFlexBE.dto.SignUpDto;
+import com.umc.StudyFlexBE.dto.response.BaseException;
+import com.umc.StudyFlexBE.dto.response.BaseResponse;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +20,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
-
     @PostMapping("/signUp")
-    public String signUp(@RequestBody @Valid SignUpDto signUpDto) {
+    public BaseResponse<?> signUp(@RequestBody @Valid SignUpDto signUpDto) {
         try{
             memberService.signUp(signUpDto);
-
-        }catch (Exception e){
-            return e.getMessage();
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS,"회원가입 성공");
+        }catch (BaseException e){
+            return new BaseResponse(e.getStatus());
         }
-
-        return "회원가입 성공";
     }
-
-
 
 }
