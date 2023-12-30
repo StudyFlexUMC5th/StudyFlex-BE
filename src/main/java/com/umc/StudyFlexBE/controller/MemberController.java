@@ -8,6 +8,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,27 +26,31 @@ public class MemberController {
 
     @GetMapping("/checkEmail/{email}")
     public BaseResponse<?> checkEmail(@PathVariable String email) {
-        try{
+        try {
             Boolean notDuplicate = memberService.checkEmail(email);
-            if (notDuplicate.equals(true)){
+            if (notDuplicate.equals(true)) {
                 return new BaseResponse<>(BaseResponseStatus.SUCCESS, "이메일 사용 가능");
             }
             return new BaseResponse<>(BaseResponseStatus.DUPLICATE_EMAIL, "이메일 사용 불가능");
-        } catch(BaseException e){
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
 
-
     @PostMapping("/signUp")
     public BaseResponse<?> signUp(@RequestBody @Valid SignUpDto signUpDto) {
-        try{
+        try {
             memberService.signUp(signUpDto);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS,"회원가입 성공");
-        }catch (BaseException e){
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "회원가입 성공");
+        } catch (BaseException e) {
             return new BaseResponse(e.getStatus());
         }
     }
 
+    @GetMapping("testauth")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public BaseResponse<?> test() {
+        return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "굿");
+    }
 }
