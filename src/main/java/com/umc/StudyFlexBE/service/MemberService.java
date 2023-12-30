@@ -5,6 +5,8 @@ import static com.umc.StudyFlexBE.entity.MemberType.*;
 import static com.umc.StudyFlexBE.entity.Role.*;
 
 import com.umc.StudyFlexBE.dto.request.SignUpDto;
+import com.umc.StudyFlexBE.dto.response.BaseException;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpDto signUpDto) {
+
         Member member = new Member();
         member.setMember_type(general);
         member.setRole(ROLE_USER);
@@ -27,4 +30,11 @@ public class MemberService {
     }
 
 
+    public boolean checkEmail(String email) {
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            return true;
+        }
+            return false;
+    }
 }

@@ -13,11 +13,14 @@ public enum BaseResponseStatus {
     /**
      * 2XXX : Common
      */
-    BAD_REQUEST(false, 2000, "잘못된 매개변수입니다.");
+    BAD_REQUEST(false, 2000, "잘못된 매개변수입니다."),
 
     /**
      * 3XXX : Member
      */
+    DUPLICATE_EMAIL(false,3000,"중복된 이메일입니다.") ;
+
+
 
     /**
      * 4XXX : Post
