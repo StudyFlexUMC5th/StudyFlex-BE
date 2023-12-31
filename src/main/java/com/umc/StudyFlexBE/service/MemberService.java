@@ -9,7 +9,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.Member;
-import com.umc.StudyFlexBE.jwt.JwtTokenProvider;
+import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
