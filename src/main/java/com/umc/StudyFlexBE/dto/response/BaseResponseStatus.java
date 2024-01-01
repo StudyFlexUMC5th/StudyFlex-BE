@@ -18,18 +18,22 @@ public enum BaseResponseStatus {
     /**
      * 3XXX : Member
      */
-    DUPLICATE_EMAIL(false,3000,"중복된 이메일입니다."),
+    DUPLICATE_EMAIL(false, 3000, "중복된 이메일입니다."),
 
-    NO_SUCH_EMAIL(false,3001,"해당 이메일이 존재하지 않습니다."),
+    NO_SUCH_EMAIL(false, 3001, "해당 이메일이 존재하지 않습니다."),
 
-    WRONG_PASSWORD(false, 3002, "비밀번호가 틀렸습니다."), ;
+    WRONG_PASSWORD(false, 3002, "비밀번호가 틀렸습니다."),
 
+
+    GET_OAUTH_TOKEN_FAILED(false, 3003, "oAuth 토큰 요청 실패"),
+
+    GET_OAUTH_INFO_FAILED(false, 3004, "oAuth Info 요청 실패"),
+    ;
 
 
     /**
      * 4XXX : Post
      */
-
 
 
     /**
