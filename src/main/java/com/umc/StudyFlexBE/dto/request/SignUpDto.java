@@ -23,6 +23,18 @@ public class SignUpDto {
     private String password;
 
 
+    @JsonProperty
+    @NotNull
+    @Size(min =1, max = 50, message = "이름은 1글자 이상 50글자 이하여야 합니다.")
+    private String name;
+
+    @JsonProperty
+    @Size(min =3 , max = 100, message = "학교 이름은 3글자 이상 100글자 이하여야 합니다.")
+    private String school;
+
+
+
+
 
 
 

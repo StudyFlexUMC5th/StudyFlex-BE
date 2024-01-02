@@ -57,6 +57,8 @@ public class MemberService {
         member.setRole(ROLE_USER);
         member.setEmail(signUpDto.getEmail());
         member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        member.setName(signUpDto.getName());
+        member.setSchool(signUpDto.getSchool());
         memberRepository.save(member);
     }
 
