@@ -1,5 +1,7 @@
 package com.umc.StudyFlexBE.service;
 
+import com.umc.StudyFlexBE.dto.response.BaseException;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +27,10 @@ public class StudyService {
         return studyRepository.findByStatus("모집중"); // 또는 StudyStatus.모집중, enum 사용시
     }
 
-
+    public void checkDuplicateStudyName(String name){
+        if(studyRepository.existsByName(name)){
+            throw new BaseException(BaseResponseStatus.DUPLICATE_STUDY_NAME);
+        }
     }
+
+}

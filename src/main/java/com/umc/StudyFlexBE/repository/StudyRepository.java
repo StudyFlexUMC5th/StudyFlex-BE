@@ -17,5 +17,6 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     List<Study> findByStatus(String status);
 
+    boolean existsByName(String name);
 
 }
