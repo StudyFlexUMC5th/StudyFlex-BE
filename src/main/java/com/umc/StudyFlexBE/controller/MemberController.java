@@ -8,6 +8,7 @@ import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.service.MemberService;
+import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,14 +72,24 @@ public class MemberController {
             String nickname = memberService.getOAuthInfo(kaKaoOAuthToken);
             // 해당 nickname 으로 된 계정이 있는지 확인
             Boolean notDuplicate = memberService.checkEmail(nickname);
-            // 있다면 로그인
-            if (notDuplicate.equals(true)) {
-
-            }
-
-            
             // 없다면 회원가입 후 로그인
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS, nickname);
+            if (notDuplicate.equals(true)) {
+                SignUpOAuthDto signUpOAuthDto = new SignUpOAuthDto();
+                signUpOAuthDto.setName(nickname);
+                signUpOAuthDto.setEmail(nickname);
+                memberService.signUpOAUth(signUpOAuthDto);
+                LoginDto loginDto = new LoginDto();
+                loginDto.setEmail(nickname);
+                loginDto.setPassword("12345");
+                String token = memberService.login(loginDto);
+                return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
+            }
+            // 있다면 로그인
+            LoginDto loginDto = new LoginDto();
+            loginDto.setEmail(nickname);
+            loginDto.setPassword("12345");
+            String token = memberService.login(loginDto);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

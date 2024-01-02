@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
 import com.umc.StudyFlexBE.dto.request.LoginDto;
 import com.umc.StudyFlexBE.dto.request.SignUpDto;
+import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
@@ -62,15 +63,29 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void signUpOAUth(SignUpOAuthDto signUpOAuthDto) {
+        Member member = new Member();
+        member.setMember_type(general);
+        member.setRole(ROLE_USER);
+        member.setEmail(signUpOAuthDto.getEmail());
+        member.setName(signUpOAuthDto.getName());
+        member.setPassword(passwordEncoder.encode("12345"));
+        member.setSchool(signUpOAuthDto.getSchool());
+        memberRepository.save(member);
+    }
+
 
     public String login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.getEmail());
         if (member == null) {
             throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
         }
+
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new BaseException(BaseResponseStatus.WRONG_PASSWORD);
         }
+
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getEmail(), loginDto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject()
@@ -80,6 +95,8 @@ public class MemberService {
         String token = "Bearer " + jwt;
         return token;
     }
+
+
 
 
     public KaKaoOAuthToken getKakaoToken(String code) {
