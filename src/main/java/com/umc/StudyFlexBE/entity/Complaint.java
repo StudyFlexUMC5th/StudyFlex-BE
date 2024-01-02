@@ -19,17 +19,19 @@ public class Complaint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long complaintMemberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "complaint_member_id", referencedColumnName = "id", nullable = false)
+    private Member complaint_member;
 
-    @Column(length = 100)
-    private String complaintedMember;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "complainted_member_id", referencedColumnName = "id", nullable = false)
+    private Member complainted_member;
 
     @Enumerated(EnumType.STRING)
-    private ComplaintCategory complaintCategory;
+    @Column(name = "complaint_category", nullable = false)
+    private ComplaintCategory complaint_category;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
-
 
 }
