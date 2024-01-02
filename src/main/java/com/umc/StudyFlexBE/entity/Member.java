@@ -38,4 +38,11 @@ public class Member {
     @Column(name = "member_type")
     private MemberType member_type;
 
+    @Column(name = "name", length = 50)
+    private String name;
+
+    @Column(name = "school",length = 100)
+    private String school;
+
+
 }
