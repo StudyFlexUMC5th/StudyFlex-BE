@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Study {
 
     @Id
@@ -33,10 +37,12 @@ public class Study {
     @Column(name = "thumbnail_url", length = 2083)
     private String thumbnailUrl;
 
-    @Column(name = "study_created_at")
+    @Column(name = "study_created_at", updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "study_updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "study_completed_at")
