@@ -2,6 +2,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import com.umc.StudyFlexBE.dto.response.study.AuthorityType;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class StudyController {
     public BaseResponse<?> checkDuplicateStudyName(@RequestParam String study_name){
         studyService.checkDuplicateStudyName(study_name);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS,"사용가능한 스터디 이름입니다.");
+    }
+
+    @GetMapping("/{study_id}/checkAuthority")
+    public BaseResponse<?> checkAuthority(@PathVariable Long study_id, @RequestParam Long member_id){
+        AuthorityType authorityType = studyService.checkAuthority(study_id, member_id);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, authorityType);
     }
 
     @GetMapping("/latest")
