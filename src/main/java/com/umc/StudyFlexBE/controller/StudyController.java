@@ -3,10 +3,12 @@ package com.umc.StudyFlexBE.controller;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.study.AuthorityType;
+import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,11 @@ public class StudyController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, authorityType);
     }
 
+    @PostMapping("/{study_id}/participation")
+    public BaseResponse<?> participation(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
+        studyService.participation(study_id, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 참여에 성공했습니다.");
+    }
     @GetMapping("/latest")
     public ResponseEntity<List<Study>> getLatestStudies() {
         List<Study> latestStudies = studyService.getLatestStudies();

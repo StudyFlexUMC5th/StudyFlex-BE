@@ -3,7 +3,10 @@ package com.umc.StudyFlexBE.service;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.study.AuthorityType;
+import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
+import com.umc.StudyFlexBE.entity.StudyParticipation;
+import com.umc.StudyFlexBE.repository.MemberRepository;
 import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
 import com.umc.StudyFlexBE.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,13 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final StudyParticipationRepository studyParticipationRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository) {
+    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, MemberRepository memberRepository) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
+        this.memberRepository = memberRepository;
     }
 
     public List<Study> getLatestStudies() {
@@ -38,7 +43,7 @@ public class StudyService {
 
     public AuthorityType checkAuthority(Long studyId, Long memberId){
         Study study = studyRepository.findById(studyId).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+                () -> new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR)
         );
 
         if(!studyParticipationRepository.existsByStudy_idAndMember_id(studyId,memberId)){
@@ -53,4 +58,17 @@ public class StudyService {
 
     }
 
+    public void participation(Long studyId, Member member){
+
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyParticipation studyParticipation = StudyParticipation.builder()
+                .study_id(study)
+                .member_id(member)
+                .build();
+
+        studyParticipationRepository.save(studyParticipation);
+    }
 }
