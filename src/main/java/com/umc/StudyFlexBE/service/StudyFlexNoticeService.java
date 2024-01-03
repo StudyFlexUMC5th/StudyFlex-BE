@@ -42,7 +42,7 @@ public class StudyFlexNoticeService {
 
     public StudyFlexNoticeResponseDto getNotice(Long noticeId) throws BaseException {
         Notice notice = StudyFlexNoticeRepository.findById(noticeId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_NOTICE));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.BAD_REQUEST)); //need to change err code
 
         return new StudyFlexNoticeResponseDto(
                 notice.getId(),

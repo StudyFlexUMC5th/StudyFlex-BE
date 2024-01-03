@@ -30,6 +30,9 @@ public class Inquiry {
     @Column(name = "is_opened", nullable = false, columnDefinition = "boolean default true")
     private Boolean is_opened;
 
+    @Column(name = "is_answered", nullable = false, columnDefinition = "boolean default false")
+    private Boolean is_answered;
+
     @Column(name = "view", nullable = false, columnDefinition = "int default 0")
     private Integer view;
 
@@ -39,4 +42,7 @@ public class Inquiry {
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp updated_at;
 
+    public boolean getIs_answered() {
+        return is_answered;
+    }
 }
