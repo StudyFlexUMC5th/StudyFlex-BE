@@ -14,7 +14,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     Optional<Study> findByCategory(Category category);
 
-    List<Study> findByStudyNameContaining(String query);
+    List<Study> findByNameContaining(String query);
 
     List<Study> findTop5ByOrderByCreatedAtDesc();
 
