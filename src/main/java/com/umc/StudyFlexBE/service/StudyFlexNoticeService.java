@@ -48,7 +48,7 @@ public class StudyFlexNoticeService {
                 notice.getId(),
                 notice.getView(),
                 notice.getTitle(),
-                notice.getMember().getMemberId(),
+                notice.getMember().getMember_id(),
                 notice.getContent(),
                 notice.getCreated_at(),
                 notice.getUpdated_at()
