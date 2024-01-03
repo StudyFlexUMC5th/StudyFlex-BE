@@ -85,4 +85,11 @@ public class StudyController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
     }
 
+    @DeleteMapping("/{study_id}/notice/{notice_id}")
+    public BaseResponse<?> deleteStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id, @AuthenticationPrincipal Member member){
+
+        studyService.deleteStudyNotice(study_id, notice_id, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    }
+
 }

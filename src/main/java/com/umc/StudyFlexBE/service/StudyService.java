@@ -170,4 +170,12 @@ public class StudyService {
                 .createAt(studyNotice.getCreatedAt())
                 .build();
     }
+
+    public void deleteStudyNotice(Long studyId, Long noticeId, Member member) {
+        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        studyNoticeRepository.deleteById(noticeId);
+    }
 }
