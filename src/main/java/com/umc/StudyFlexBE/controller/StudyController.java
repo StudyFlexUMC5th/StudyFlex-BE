@@ -59,5 +59,12 @@ public class StudyController {
         List<Study> openStudies = studyService.getOpenStudies();
         return ResponseEntity.ok(openStudies);
     }
+    @GetMapping("/ranking")
+    public ResponseEntity<List<Study>> getStudyRanking() {
+        List<Study> rankedStudies = studyService.getRankedStudies();
+        return ResponseEntity.ok(rankedStudies);
+    }
+
+
 
 }

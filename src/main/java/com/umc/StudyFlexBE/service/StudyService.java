@@ -8,6 +8,7 @@ import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.CategoryRepository;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
+
 import com.umc.StudyFlexBE.repository.StudyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,5 +116,22 @@ public class StudyService {
         }
 
         return url;
+      
+    public List<Study> getRankedStudies() {
+        List<Study> studies = studyRepository.findAll();
+        studies.forEach(this::calculateRankScore);
+        return studies.stream()
+                .sorted((s1, s2) -> Double.compare(s2.getRankScore(), s1.getRankScore()))
+                .limit(3)
+                .collect(Collectors.toList());
+    }
+
+    private void calculateRankScore(Study study) {
+        int noticeCount = studyNoticeRepository.countByStudy(study);
+        double rankScore = noticeCount
+                + study.getCurrentMembers()
+                + (study.getTotalProgressRate() * 0.1);
+        study.setRankScore(rankScore);
+
     }
 }

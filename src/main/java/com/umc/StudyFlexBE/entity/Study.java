@@ -69,5 +69,18 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
 
+    @Column(name = "total_progress_rate")
+    private Double totalProgressRate;
+
+    @Transient
+    private Double rankScore;
+
+    public void setRankScore(Double rankScore) {
+        this.rankScore = rankScore;
+    }
+    public Double getRankScore() {
+        return rankScore; 
+    }
+
 }
 
