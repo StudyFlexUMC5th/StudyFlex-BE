@@ -38,11 +38,4 @@ public class Member {
     @Column(name = "member_type")
     private MemberType member_type;
 
-    public Long getMemberId() {
-        return member_id;
-    }
-
-    public String getName() {
-        return null;
-    }
 }
