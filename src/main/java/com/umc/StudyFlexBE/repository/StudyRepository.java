@@ -9,13 +9,17 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Long> {
+    @Override
+    Optional<Study> findById(Long aLong);
+
     Optional<Study> findByCategory(Category category);
 
-    List<Study> findByStudyNameContaining(String query);
+    List<Study> findByNameContaining(String query);
 
     List<Study> findTop5ByOrderByCreatedAtDesc();
 
     List<Study> findByStatus(String status);
 
+    boolean existsByName(String name);
 
 }
