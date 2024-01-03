@@ -30,18 +30,12 @@ public enum BaseResponseStatus {
 
     GET_OAUTH_INFO_FAILED(false, 3004, "oAuth Info 요청 실패"),
 
-    NO_SUCH_STUDY(false, 6000, "해당 스터디를 찾을 수 없습니다."),
-
-    DUPLICATE_STUDY_NAME(false, 7001,"중복된 스터디 이름입니다."),
-
-    INTERNAL_SERVER_ERROR(false, 500, "서버 내부 오류가 발생했습니다.");
-    ;
-
-
 
     /**
      * 4XXX : Post
      */
+    DUPLICATE_STUDY_NAME(false, 4001,"중복된 스터디 이름입니다."),
+    NO_SUCH_CATEGORY(false,4002, "해당 카테고리를 찾을 수 없습니다"),
 
 
     /**
@@ -51,12 +45,10 @@ public enum BaseResponseStatus {
     /**
      * 6XXX : Search
      */
+    NO_SUCH_STUDY(false, 6000, "해당 스터디를 찾을 수 없습니다."),
 
-
-    /**
-     * 7XXX : Study
-     */
-
+    INTERNAL_SERVER_ERROR(false, 500, "서버 내부 오류가 발생했습니다.");
+    ;
 
     private final boolean isSuccess;
     private final int code;
