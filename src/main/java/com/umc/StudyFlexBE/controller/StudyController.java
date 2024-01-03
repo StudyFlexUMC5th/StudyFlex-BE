@@ -5,6 +5,7 @@ import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
+import com.umc.StudyFlexBE.dto.response.StudyNoticeRes;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
@@ -67,7 +68,7 @@ public class StudyController {
         return ResponseEntity.ok(rankedStudies);
     }
 
-    @PostMapping("/{study_id}/notice")
+    @PostMapping("/{study_id}/postNotice")
     public BaseResponse<?> postStudyNotice(
             @PathVariable Long study_id,
             @AuthenticationPrincipal Member member,
@@ -77,5 +78,11 @@ public class StudyController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, "공지사항이 등록되었습니다.");
     }
 
+    @GetMapping("/{study_id}/notice/{notice_id}")
+    public BaseResponse<?> getStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id, @AuthenticationPrincipal Member member){
+
+        StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
+    }
 
 }

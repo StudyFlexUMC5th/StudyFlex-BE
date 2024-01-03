@@ -5,6 +5,7 @@ import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
+import com.umc.StudyFlexBE.dto.response.StudyNoticeRes;
 import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.*;
 
@@ -152,5 +153,21 @@ public class StudyService {
                 .build();
 
         studyNoticeRepository.save(studyNotice);
+    }
+
+    public StudyNoticeRes getStudyNotice(Long studyId, Long noticeId, Member member){
+        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        StudyNotice studyNotice = studyNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY_NOTICE)
+        );
+
+        return StudyNoticeRes.builder()
+                .title(studyNotice.getTitle())
+                .content(studyNotice.getContent())
+                .createAt(studyNotice.getCreatedAt())
+                .build();
     }
 }
