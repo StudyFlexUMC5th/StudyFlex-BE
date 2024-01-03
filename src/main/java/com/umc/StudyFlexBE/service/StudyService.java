@@ -1,31 +1,40 @@
 package com.umc.StudyFlexBE.service;
 
+import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
-import com.umc.StudyFlexBE.entity.Member;
-import com.umc.StudyFlexBE.entity.Study;
-import com.umc.StudyFlexBE.entity.StudyParticipation;
+import com.umc.StudyFlexBE.entity.*;
+import com.umc.StudyFlexBE.repository.CategoryRepository;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
 import com.umc.StudyFlexBE.repository.StudyRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class StudyService {
 
     private final StudyRepository studyRepository;
     private final StudyParticipationRepository studyParticipationRepository;
     private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, MemberRepository memberRepository) {
+    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, MemberRepository memberRepository, CategoryRepository categoryRepository) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
         this.memberRepository = memberRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<Study> getLatestStudies() {
@@ -41,16 +50,16 @@ public class StudyService {
         }
     }
 
-    public StudyAuthorityType checkAuthority(Long studyId, Long memberId){
+    public StudyAuthorityType checkAuthority(Long studyId, Member member){
         Study study = studyRepository.findById(studyId).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR)
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
-        if(!studyParticipationRepository.existsByStudy_idAndMember_id(studyId,memberId)){
+        if(!studyParticipationRepository.existsByStudyAndMember(study,member)){
             return StudyAuthorityType.NON_MEMBER;
         }
 
-        if(study.getLeaderId().equals(memberId)){
+        if(study.getLeaderId().equals(member.getMember_id())){
             return StudyAuthorityType.LEADER;
         }else {
             return StudyAuthorityType.MEMBER;
@@ -65,10 +74,46 @@ public class StudyService {
         );
 
         StudyParticipation studyParticipation = StudyParticipation.builder()
-                .study_id(study)
-                .member_id(member)
+                .study(study)
+                .member(member)
                 .build();
 
         studyParticipationRepository.save(studyParticipation);
+    }
+
+    @Transactional
+    public void createStudy(StudyReq studyReq, Member member){
+        Category category = categoryRepository.findByName(studyReq.getCategoryName())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_CATEGORY));
+
+
+        Study study = Study.builder()
+                .leaderId(member.getMember_id())
+                .category(category)
+                .status(StudyStatus.RECRUITING)
+                .name(studyReq.getStudyName())
+                .thumbnailUrl(uploadImg(studyReq.getThumbnailUrl(), member.getMember_id()))
+                .maxMembers(studyReq.getMaxMembers())
+                .currentMembers(1)
+                .completedAt(LocalDateTime.now().plusWeeks(studyReq.getTargetWeek()))
+                .build();
+
+        studyRepository.save(study);
+    }
+
+    private String uploadImg(MultipartFile img, Long memberId){
+        String url = "";
+
+        if(!img.isEmpty()){
+            url = "../testFile/" + memberId;
+            try {
+                img.transferTo(new File(url));
+            }catch (IOException e){
+                log.info("uploadImg Error : ",e);
+                throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return url;
     }
 }

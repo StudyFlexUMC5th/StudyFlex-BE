@@ -5,8 +5,6 @@ import com.umc.StudyFlexBE.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class SearchService {
     private final StudyRepository studyRepository;
@@ -19,7 +17,7 @@ public class SearchService {
 
     public Study searchStudies(String query) {
         return studyRepository
-                .findByStudyNameContaining(query).stream().findFirst().orElse(null);
+                .findByNameContaining(query).stream().findFirst().orElse(null);
     }
 
 

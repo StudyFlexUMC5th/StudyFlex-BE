@@ -1,5 +1,6 @@
 package com.umc.StudyFlexBE.controller;
 
+import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
@@ -24,6 +25,12 @@ public class StudyController {
         this.studyService = studyService;
     }
 
+    @PostMapping
+    public BaseResponse<?> createStudy(@RequestBody StudyReq study, @AuthenticationPrincipal Member member){
+        studyService.createStudy(study, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    }
+
     @GetMapping("/checkName")
     public BaseResponse<?> checkDuplicateStudyName(@RequestParam String study_name){
         studyService.checkDuplicateStudyName(study_name);
@@ -31,8 +38,8 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/checkAuthority")
-    public BaseResponse<?> checkAuthority(@PathVariable Long study_id, @RequestParam Long member_id){
-        StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, member_id);
+    public BaseResponse<?> checkAuthority(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
+        StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, member);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyAuthorityType);
     }
 
