@@ -55,7 +55,6 @@ public class MemberService {
     public void signUp(SignUpDto signUpDto) {
         Member member = new Member();
         member.setMember_type(general);
-        member.setRole(ROLE_USER);
         member.setEmail(signUpDto.getEmail());
         member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         member.setName(signUpDto.getName());
@@ -67,7 +66,6 @@ public class MemberService {
     public void signUpOAUth(SignUpOAuthDto signUpOAuthDto) {
         Member member = new Member();
         member.setMember_type(general);
-        member.setRole(ROLE_USER);
         member.setEmail(signUpOAuthDto.getEmail());
         member.setName(signUpOAuthDto.getName());
         member.setPassword(passwordEncoder.encode("12345"));
@@ -153,4 +151,12 @@ public class MemberService {
     }
 
 
+    @Transactional
+    public void certifyWebMail(String email, String school, String webEmail) {
+        Member member = memberRepository.findByEmail(email);
+        member.setSchool(school);
+        member.setWeb_email(webEmail);
+        member.setRole(ROLE_USER);
+        memberRepository.save(member);
+    }
 }
