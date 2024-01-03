@@ -18,11 +18,11 @@ public class InquiryAnswer {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inquiry_id", referencedColumnName = "id", nullable = false)
-    private Inquiry inquiry_id;
+    @JoinColumn(name = "inquiry_id", nullable = false)
+    private Inquiry inquiry;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member_id;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
