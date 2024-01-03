@@ -18,11 +18,11 @@ public class Complaint {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "complaint_member_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "complaint_member_id", referencedColumnName = "member_id", nullable = false)
     private Member complaint_member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "complainted_member_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "complainted_member_id", referencedColumnName = "member_id", nullable = false)
     private Member complainted_member;
 
     @Enumerated(EnumType.STRING)

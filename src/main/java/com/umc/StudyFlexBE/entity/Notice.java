@@ -20,7 +20,7 @@ public class Notice {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id", nullable = false)
     private Member member;
 
     @Column(name = "title", length = 100, nullable = false)

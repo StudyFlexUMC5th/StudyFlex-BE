@@ -22,7 +22,7 @@ public class InquiryAnswer {
     private Inquiry inquiry_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id", nullable = false)
     private Member member_id;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
