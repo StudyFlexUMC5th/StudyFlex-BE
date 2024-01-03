@@ -2,10 +2,7 @@ package com.umc.StudyFlexBE.service;
 
 import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
-import com.umc.StudyFlexBE.dto.response.BaseException;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
-import com.umc.StudyFlexBE.dto.response.StudyNoticeRes;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.*;
 
@@ -177,5 +174,29 @@ public class StudyService {
         }
 
         studyNoticeRepository.deleteById(noticeId);
+    }
+
+    public StudyNoticesInfoRes getStudyNotices(Long studyId, Member member) {
+        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        List<StudyNoticesRes> studyNoticesRes = studyNoticeRepository.findAllByStudy(study)
+                .stream()
+                .map(studyNotice ->
+                        StudyNoticesRes.builder()
+                                .title(studyNotice.getTitle())
+                                .createAt(studyNotice.getCreatedAt())
+                                .build()
+                ).collect(Collectors.toList());
+
+        return StudyNoticesInfoRes.builder()
+                .notices(studyNoticesRes)
+                .itemSize(studyNoticesRes.size())
+                .build();
     }
 }

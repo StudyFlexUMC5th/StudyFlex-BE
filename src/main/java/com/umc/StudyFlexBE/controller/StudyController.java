@@ -2,10 +2,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
-import com.umc.StudyFlexBE.dto.response.BaseResponse;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
-import com.umc.StudyFlexBE.dto.response.StudyNoticeRes;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
@@ -92,4 +89,10 @@ public class StudyController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
 
+    @GetMapping("/app/studies/{study_id}/notice")
+    public BaseResponse<?> getStudyNotices(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
+        StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, member);
+
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyNotices);
+    }
 }
