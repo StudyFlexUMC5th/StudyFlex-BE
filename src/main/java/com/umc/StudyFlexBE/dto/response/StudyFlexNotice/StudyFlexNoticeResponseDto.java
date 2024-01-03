@@ -1,4 +1,4 @@
-package com.umc.StudyFlexBE.dto.response;
+package com.umc.StudyFlexBE.dto.response.StudyFlexNotice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

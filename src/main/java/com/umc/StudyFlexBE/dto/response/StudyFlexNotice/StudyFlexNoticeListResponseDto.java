@@ -1,25 +1,25 @@
-package com.umc.StudyFlexBE.dto.response;
+package com.umc.StudyFlexBE.dto.response.StudyFlexNotice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class InquiryListResponseDto {
+public class StudyFlexNoticeListResponseDto {
     private int page;
     private int itemSize;
     private int totalPages;
-    private List<InquirySummary> inquiryList;
+    private List<NoticeSummary> noticeList;
 
     @Getter
     @AllArgsConstructor
-    public static class InquirySummary {
+    public static class NoticeSummary {
         private Long id;
         private String title;
         private String writer;
         private int views;
-        private boolean isOpen;
     }
 }

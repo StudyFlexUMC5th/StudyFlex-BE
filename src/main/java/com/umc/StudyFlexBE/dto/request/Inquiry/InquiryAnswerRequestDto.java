@@ -1,4 +1,4 @@
-package com.umc.StudyFlexBE.dto.request;
+package com.umc.StudyFlexBE.dto.request.Inquiry;
 
 import lombok.Getter;
 import lombok.Setter;

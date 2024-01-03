@@ -1,7 +1,5 @@
 package com.umc.StudyFlexBE.service;
 
-// 기존 코드...
-
 import com.umc.StudyFlexBE.dto.request.ComplaintRequestDto;
 import com.umc.StudyFlexBE.dto.response.ComplaintResponseDto;
 import com.umc.StudyFlexBE.entity.Complaint;
@@ -25,7 +23,6 @@ public class ComplaintService {
         Member complaintMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        // 피신고자 정보 설정 필요. 예를 들어 request에 피신고자 ID가 포함된 경우
         Member complaintedMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 

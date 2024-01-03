@@ -1,10 +1,10 @@
 package com.umc.StudyFlexBE.service;
 
-import com.umc.StudyFlexBE.dto.request.InquiryAnswerRequestDto;
-import com.umc.StudyFlexBE.dto.request.InquiryUploadRequestDto;
-import com.umc.StudyFlexBE.dto.response.InquiryAnswerResponseDto;
-import com.umc.StudyFlexBE.dto.response.InquiryListResponseDto;
-import com.umc.StudyFlexBE.dto.response.InquiryResponseDto;
+import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryAnswerRequestDto;
+import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryUploadRequestDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryAnswerResponseDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryListResponseDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryResponseDto;
 import com.umc.StudyFlexBE.entity.Inquiry;
 import com.umc.StudyFlexBE.entity.InquiryAnswer;
 import com.umc.StudyFlexBE.entity.Member;
@@ -32,13 +32,10 @@ public class InquiryService {
         this.inquiryAnswerRepository = inquiryAnswerRepository;
     }
 
-    public Inquiry createInquiry(String userToken, InquiryUploadRequestDto request) {
-        // JWT 토큰에서 회원 정보 추출 (회원 ID 또는 username)
-        // 예시: Long memberId = jwtTokenProvider.getMemberId(userToken);
-        // Member member = memberRepository.findById(memberId).orElseThrow(...);
+    public Inquiry createInquiry(Member memberId, InquiryUploadRequestDto request) {
 
         Inquiry inquiry = new Inquiry();
-        inquiry.setMember_id(member);
+        inquiry.setMember_id(memberId);
         inquiry.setTitle(request.getTitle());
         inquiry.setContent(request.getContent());
         inquiry.setIs_opened(true);
@@ -55,7 +52,7 @@ public class InquiryService {
                 .map(inquiry -> new InquiryListResponseDto.InquirySummary(
                         inquiry.getId(),
                         inquiry.getTitle(),
-                        inquiry.getMember_id().getName(), // 가정: Member 엔티티에 'getName()' 메소드가 있음
+                        inquiry.getMember_id().getName(),
                         inquiry.getView(),
                         inquiry.getIs_opened()
                 ))

@@ -2,6 +2,8 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.request.StudyFlexNoticeUploadDto;
 import com.umc.StudyFlexBE.dto.response.*;
+import com.umc.StudyFlexBE.dto.response.StudyFlexNotice.StudyFlexNoticeListResponseDto;
+import com.umc.StudyFlexBE.dto.response.StudyFlexNotice.StudyFlexNoticeResponseDto;
 import com.umc.StudyFlexBE.entity.Notice;
 import com.umc.StudyFlexBE.service.StudyFlexNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;

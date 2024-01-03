@@ -1,8 +1,12 @@
 package com.umc.StudyFlexBE.controller;
 
-import com.umc.StudyFlexBE.dto.request.InquiryAnswerRequestDto;
-import com.umc.StudyFlexBE.dto.request.InquiryUploadRequestDto;
+import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryAnswerRequestDto;
+import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryUploadRequestDto;
 import com.umc.StudyFlexBE.dto.response.*;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryAnswerResponseDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryListResponseDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryResponseDto;
+import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryUploadResponseDto;
 import com.umc.StudyFlexBE.entity.Inquiry;
 import com.umc.StudyFlexBE.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +73,6 @@ public class InquiryController {
             @RequestHeader("Authorization") String userToken) {
         try {
             Long memberId = jwtTokenProvider.getMemberId(userToken);
-
             InquiryAnswerResponseDto inquiryAnswerResponse = inquiryService.postAnswer(inquiryId, request, memberId);
             return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, inquiryAnswerResponse));
         } catch (Exception e) {

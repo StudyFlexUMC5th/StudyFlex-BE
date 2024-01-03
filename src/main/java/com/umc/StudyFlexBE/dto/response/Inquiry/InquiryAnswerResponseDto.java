@@ -1,4 +1,4 @@
-package com.umc.StudyFlexBE.dto.response;
+package com.umc.StudyFlexBE.dto.response.Inquiry;
 
 
 import lombok.AllArgsConstructor;
