@@ -38,6 +38,13 @@ public class Member {
     @Column(name = "member_type")
     private MemberType member_type;
 
+    @Column(name = "name", length = 50)
+    private String name;
+
+    @Column(name = "school",length = 100)
+    private String school;
+
+
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
