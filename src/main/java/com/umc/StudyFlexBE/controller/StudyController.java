@@ -2,7 +2,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.study.AuthorityType;
+import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
@@ -32,8 +32,8 @@ public class StudyController {
 
     @GetMapping("/{study_id}/checkAuthority")
     public BaseResponse<?> checkAuthority(@PathVariable Long study_id, @RequestParam Long member_id){
-        AuthorityType authorityType = studyService.checkAuthority(study_id, member_id);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, authorityType);
+        StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, member_id);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyAuthorityType);
     }
 
     @PostMapping("/{study_id}/participation")

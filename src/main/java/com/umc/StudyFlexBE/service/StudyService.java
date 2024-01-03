@@ -2,7 +2,7 @@ package com.umc.StudyFlexBE.service;
 
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.study.AuthorityType;
+import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.entity.StudyParticipation;
@@ -41,19 +41,19 @@ public class StudyService {
         }
     }
 
-    public AuthorityType checkAuthority(Long studyId, Long memberId){
+    public StudyAuthorityType checkAuthority(Long studyId, Long memberId){
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR)
         );
 
         if(!studyParticipationRepository.existsByStudy_idAndMember_id(studyId,memberId)){
-            return AuthorityType.NON_MEMBER;
+            return StudyAuthorityType.NON_MEMBER;
         }
 
         if(study.getLeaderId().equals(memberId)){
-            return AuthorityType.LEADER;
+            return StudyAuthorityType.LEADER;
         }else {
-            return AuthorityType.MEMBER;
+            return StudyAuthorityType.MEMBER;
         }
 
     }
