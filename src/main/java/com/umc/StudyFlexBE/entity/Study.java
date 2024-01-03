@@ -54,5 +54,19 @@ public class Study {
     @Column(name = "study_hits")
     private BigInteger hits;
 
+    @Column(name = "total_progress_rate")
+    private Double totalProgressRate;
+
+    @Transient
+    private Double rankScore;
+
+    public void setRankScore(Double rankScore) {
+        this.rankScore = rankScore;
+    }
+    public Double getRankScore() {
+        return rankScore; }
+
+
+
 }
 
