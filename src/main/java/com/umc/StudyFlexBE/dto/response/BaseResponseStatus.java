@@ -41,6 +41,7 @@ public enum BaseResponseStatus {
     NO_SUCH_CATEGORY(false,4002, "해당 카테고리를 찾을 수 없습니다"),
     STUDY_NOT_FOUND(false, 4003, "스터디를 찾을 수 없습니다."),
     LEADER_NOT_FOUND(false, 4004, "리더를 찾을 수 없습니다."),
+    NO_AUTHORITY(false,4005,"권한이 없습니다."),
 
 
     /**

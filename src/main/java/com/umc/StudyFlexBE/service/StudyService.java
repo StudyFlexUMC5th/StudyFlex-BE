@@ -1,5 +1,6 @@
 package com.umc.StudyFlexBE.service;
 
+import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
@@ -133,5 +134,23 @@ public class StudyService {
                 + (study.getTotalProgressRate() * 0.1);
         study.setRankScore(rankScore);
 
+    }
+
+    public void postStudyNotice(Long studyId, Member member, StudyNoticeReq studyNoticeReq){
+        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyNotice studyNotice = StudyNotice.builder()
+                .title(studyNoticeReq.getTitle())
+                .content(studyNoticeReq.getContent())
+                .study(study)
+                .build();
+
+        studyNoticeRepository.save(studyNotice);
     }
 }
