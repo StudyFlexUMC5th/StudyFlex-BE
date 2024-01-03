@@ -5,11 +5,8 @@ import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
 import com.umc.StudyFlexBE.entity.*;
-import com.umc.StudyFlexBE.repository.CategoryRepository;
-import com.umc.StudyFlexBE.repository.MemberRepository;
-import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
+import com.umc.StudyFlexBE.repository.*;
 
-import com.umc.StudyFlexBE.repository.StudyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,14 +25,14 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final StudyParticipationRepository studyParticipationRepository;
-    private final MemberRepository memberRepository;
+    private final StudyNoticeRepository studyNoticeRepository;
     private final CategoryRepository categoryRepository;
 
     @Autowired
-    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, MemberRepository memberRepository, CategoryRepository categoryRepository) {
+    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, StudyNoticeRepository studyNoticeRepository, CategoryRepository categoryRepository) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
-        this.memberRepository = memberRepository;
+        this.studyNoticeRepository = studyNoticeRepository;
         this.categoryRepository = categoryRepository;
     }
 
@@ -102,21 +100,23 @@ public class StudyService {
         studyRepository.save(study);
     }
 
-    private String uploadImg(MultipartFile img, Long memberId){
+    private String uploadImg(MultipartFile img, Long memberId) {
         String url = "";
 
-        if(!img.isEmpty()){
+        if (!img.isEmpty()) {
             url = "../testFile/" + memberId;
             try {
                 img.transferTo(new File(url));
-            }catch (IOException e){
-                log.info("uploadImg Error : ",e);
+            } catch (IOException e) {
+                log.info("uploadImg Error : ", e);
                 throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
         return url;
-      
+
+    }
+
     public List<Study> getRankedStudies() {
         List<Study> studies = studyRepository.findAll();
         studies.forEach(this::calculateRankScore);
