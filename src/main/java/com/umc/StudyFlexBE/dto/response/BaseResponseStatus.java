@@ -34,8 +34,11 @@ public enum BaseResponseStatus {
     /**
      * 4XXX : Post
      */
+    MEMBER_NOT_FOUND(false, 4000, "회원을 찾을 수 없습니다."),
     DUPLICATE_STUDY_NAME(false, 4001,"중복된 스터디 이름입니다."),
     NO_SUCH_CATEGORY(false,4002, "해당 카테고리를 찾을 수 없습니다"),
+    STUDY_NOT_FOUND(false, 4003, "스터디를 찾을 수 없습니다."),
+    LEADER_NOT_FOUND(false, 4004, "리더를 찾을 수 없습니다."),
 
 
     /**

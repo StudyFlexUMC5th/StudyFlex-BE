@@ -1,8 +1,6 @@
 package com.umc.StudyFlexBE.entity;
 
 
-import java.sql.Timestamp;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

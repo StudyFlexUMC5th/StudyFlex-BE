@@ -32,10 +32,11 @@ public class InquiryService {
         this.inquiryAnswerRepository = inquiryAnswerRepository;
     }
 
-    public Inquiry createInquiry(Member memberId, InquiryUploadRequestDto request) {
-
+    public Inquiry createInquiry(Long memberId, InquiryUploadRequestDto request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
         Inquiry inquiry = new Inquiry();
-        inquiry.setMember_id(memberId);
+        inquiry.setMember_id(member);
         inquiry.setTitle(request.getTitle());
         inquiry.setContent(request.getContent());
         inquiry.setIs_opened(true);

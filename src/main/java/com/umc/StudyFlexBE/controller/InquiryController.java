@@ -8,9 +8,12 @@ import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryListResponseDto;
 import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryResponseDto;
 import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryUploadResponseDto;
 import com.umc.StudyFlexBE.entity.Inquiry;
+import com.umc.StudyFlexBE.security.CustomUserDetails;
 import com.umc.StudyFlexBE.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +28,13 @@ public class InquiryController {
 
     @PostMapping("/postNotice")
     public ResponseEntity<BaseResponse<InquiryUploadResponseDto>> postInquiry(
-            @RequestHeader("Authorization") String userToken,
             @RequestBody InquiryUploadRequestDto request) {
         try {
-            Inquiry inquiry = inquiryService.createInquiry(userToken, request);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long memberId = userDetails.getMemberId();
+
+            Inquiry inquiry = inquiryService.createInquiry(memberId, request);
             return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, new InquiryUploadResponseDto(inquiry.getId())));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new BaseResponse<>(BaseResponseStatus.BAD_REQUEST));
@@ -69,10 +75,12 @@ public class InquiryController {
     @PostMapping("/{inquiryId}/answer")
     public ResponseEntity<BaseResponse<InquiryAnswerResponseDto>> postAnswer(
             @PathVariable Long inquiryId,
-            @RequestBody InquiryAnswerRequestDto request,
-            @RequestHeader("Authorization") String userToken) {
+            @RequestBody InquiryAnswerRequestDto request) {
         try {
-            Long memberId = jwtTokenProvider.getMemberId(userToken);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long memberId = userDetails.getMemberId();
+
             InquiryAnswerResponseDto inquiryAnswerResponse = inquiryService.postAnswer(inquiryId, request, memberId);
             return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, inquiryAnswerResponse));
         } catch (Exception e) {
