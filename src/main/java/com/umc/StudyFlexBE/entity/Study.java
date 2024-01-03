@@ -1,8 +1,7 @@
 package com.umc.StudyFlexBE.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import jakarta.persistence.Id;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,6 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Study {
 
@@ -31,8 +33,8 @@ public class Study {
     private Category category;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "study_status", columnDefinition = "ENUM('모집중', '모집완료')")
-    private String status;
+    @Column(name = "study_status", columnDefinition = "ENUM('RECRUITING', 'COMPLETED')")
+    private StudyStatus status;
 
     @Column(name = "thumbnail_url", length = 2083)
     private String thumbnailUrl;
