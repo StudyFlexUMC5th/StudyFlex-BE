@@ -72,9 +72,9 @@ public class InquiryService {
                 .orElseThrow(() -> new RuntimeException("Inquiry not found"));
 
         InquiryResponseDto.AnswerResponse answerResponse = null;
-        boolean isAnswered = inquiryAnswerRepository.findByInquiry_id(inquiryId).isPresent();
+        boolean isAnswered = inquiryAnswerRepository.findByInquiry(inquiry).isPresent();
         if (isAnswered) {
-            InquiryAnswer answer = inquiryAnswerRepository.findByInquiry_id(inquiryId).get();
+            InquiryAnswer answer = inquiryAnswerRepository.findByInquiry(inquiry).get();
             answerResponse = new InquiryResponseDto.AnswerResponse(
                     answer.getId(),
                     answer.getMember_id().getName(),
@@ -128,13 +128,14 @@ public class InquiryService {
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
         InquiryAnswer answer = new InquiryAnswer();
-        answer.setInquiry_id(inquiry);
+        answer.setInquiry(inquiry);
         answer.setMember_id(member);
         answer.setContent(request.getContent());
         answer.setCreated_at(new Timestamp(System.currentTimeMillis()));
         answer.setUpdated_at(new Timestamp(System.currentTimeMillis()));
 
         InquiryAnswer savedAnswer = inquiryAnswerRepository.save(answer);
+
 
         inquiry.setIs_answered(true);
         inquiryRepository.save(inquiry);

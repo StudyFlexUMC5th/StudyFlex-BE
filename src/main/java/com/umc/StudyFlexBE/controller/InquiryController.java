@@ -63,7 +63,7 @@ public class InquiryController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<BaseResponse<InquiryListResponseDto>> searchInquiries(
             @RequestParam(required = false) String query,
             @RequestParam(defaultValue = "0") int page,
