@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface InquiryAnswerRepository extends JpaRepository<InquiryAnswer, Long> {
-    Optional<InquiryAnswer> findByInquiryId(Long inquiryId);
+    Optional<InquiryAnswer> findByInquiry_id(Long inquiryId);
 }
 
