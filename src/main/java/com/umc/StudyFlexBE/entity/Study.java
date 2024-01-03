@@ -3,12 +3,15 @@ package com.umc.StudyFlexBE.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,6 +64,10 @@ public class Study {
 
     @Column(name = "study_hits")
     private BigInteger hits;
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<StudyParticipation> studyParticipationList = new ArrayList<>();
 
 }
 

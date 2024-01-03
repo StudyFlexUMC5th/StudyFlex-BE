@@ -18,9 +18,9 @@ public class StudyParticipation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
-    private Study study_id;
+    private Study study;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member_id;
+    private Member member;
 }
