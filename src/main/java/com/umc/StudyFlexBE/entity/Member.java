@@ -1,15 +1,15 @@
 package com.umc.StudyFlexBE.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -38,4 +38,14 @@ public class Member {
     @Column(name = "member_type")
     private MemberType member_type;
 
+    @Column(name = "name", length = 50)
+    private String name;
+
+    @Column(name = "school",length = 100)
+    private String school;
+
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<StudyParticipation> studyParticipationList = new ArrayList<>();
 }

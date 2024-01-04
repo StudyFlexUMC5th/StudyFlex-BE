@@ -3,7 +3,6 @@ package com.umc.StudyFlexBE.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-
 import java.time.LocalDateTime;
 @Entity
 @Builder

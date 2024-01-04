@@ -1,13 +1,17 @@
 package com.umc.StudyFlexBE.exception;
 
+import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class ValidExceptionHandler {
 
@@ -24,5 +28,12 @@ public class ValidExceptionHandler {
 
         return new ResponseEntity<>(new BaseResponse<String>(BaseResponseStatus.BAD_REQUEST, errorMessage.toString()),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BaseException.class)
+    protected BaseResponse<?> handleException(
+            BaseException e,HttpServletRequest request){
+        log.error("Exception: {} {}", request.getRequestURL(), e);
+        return new  BaseResponse<>(e.getStatus());
     }
 }
