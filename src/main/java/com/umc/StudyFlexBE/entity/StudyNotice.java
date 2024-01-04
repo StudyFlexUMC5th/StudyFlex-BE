@@ -1,10 +1,15 @@
 package com.umc.StudyFlexBE.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
-
+@Entity
+@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class StudyNotice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -27,13 +28,13 @@ public class Study {
     private Category category;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "study_status", columnDefinition = "ENUM('모집중', '모집완료')")
+    @Column(name = "study_status", columnDefinition = "ENUM('RECRUITING', 'COMPLETED')")
     private String status;
 
     @Column(name = "thumbnail_url", length = 2083)
     private String thumbnailUrl;
 
-    @Column(name = "study_created_at")
+    @Column(name = "study_created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "study_updated_at")
@@ -53,6 +54,12 @@ public class Study {
 
     @Column(name = "study_hits")
     private BigInteger hits;
+
+
+    /*
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<StudyParticipation> studyParticipationList = new ArrayList<>();*/
 
     @Column(name = "total_progress_rate")
     private Double totalProgressRate;

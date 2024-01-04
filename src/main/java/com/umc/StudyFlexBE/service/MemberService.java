@@ -42,6 +42,8 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RestTemplate restTemplate;
 
+
+
     public boolean checkEmail(String email) {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
@@ -131,7 +133,9 @@ public class MemberService {
             throw new BaseException(BaseResponseStatus.GET_OAUTH_INFO_FAILED);
         }
 
+
     }
+
 
 
 }
