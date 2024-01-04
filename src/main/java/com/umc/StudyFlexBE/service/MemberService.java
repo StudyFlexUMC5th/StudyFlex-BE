@@ -91,11 +91,8 @@ public class MemberService {
         try {
             Authentication authentication = authenticationManagerBuilder.getObject()
                     .authenticate(usernamePasswordAuthenticationToken);
-            System.out.println("1");
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("2");
             String jwt = jwtTokenProvider.createToken(authentication);
-            System.out.println("3");
             String token = "Bearer " + jwt;
             return token;
 
