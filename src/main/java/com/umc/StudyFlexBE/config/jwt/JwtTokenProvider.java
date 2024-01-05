@@ -1,15 +1,9 @@
 package com.umc.StudyFlexBE.config.jwt;
-
-
+//import org.springframework.security.core.userdetails.User;
 import com.umc.StudyFlexBE.security.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,8 +12,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public class JwtTokenProvider implements InitializingBean {
 
     @Value("${jwt.token-validity-in-seconds}")
     private long tokenValidityInMilliseconds;
-
     private Key key;
 
 
@@ -60,13 +58,12 @@ public class JwtTokenProvider implements InitializingBean {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(SignatureAlgorithm.forName("HS512"), key)
                 .setExpiration(validity);
 
         if (memberId != null) {
             builder.claim("memberId", memberId);
         }
-
         return builder.compact();
     }
 
@@ -129,4 +126,3 @@ public class JwtTokenProvider implements InitializingBean {
         return false;
     }
 }
-

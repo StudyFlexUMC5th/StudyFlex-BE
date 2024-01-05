@@ -14,4 +14,6 @@ public class NaverDto {
     private String id;
     private String email;
     private String name;
+
+
 }

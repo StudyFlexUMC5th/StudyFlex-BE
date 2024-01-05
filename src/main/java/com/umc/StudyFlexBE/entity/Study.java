@@ -72,6 +72,7 @@ public class Study {
 
 
     @BatchSize(size = 100)
+    @Builder.Default
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
 
@@ -85,9 +86,12 @@ public class Study {
     public void setRankScore(Double rankScore) {
         this.rankScore = rankScore;
     }
+
     public Double getRankScore() {
-        return rankScore; 
+        return rankScore;
     }
+
+
 
 }
 

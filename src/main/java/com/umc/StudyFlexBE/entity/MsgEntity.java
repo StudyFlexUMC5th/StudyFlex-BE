@@ -1,8 +1,6 @@
 package com.umc.StudyFlexBE.entity;
 
 
-import com.umc.StudyFlexBE.dto.request.NaverDto;
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
+
 public class MsgEntity {
 
     private String message;
-    private NaverDto data;
-}
+    private String data;
+
+ }

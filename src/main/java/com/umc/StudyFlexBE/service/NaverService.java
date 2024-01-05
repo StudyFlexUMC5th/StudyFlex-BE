@@ -3,11 +3,16 @@ package com.umc.StudyFlexBE.service;
 import com.umc.StudyFlexBE.dto.request.NaverDto;
 import com.umc.StudyFlexBE.dto.response.APICallException;
 import com.umc.StudyFlexBE.dto.response.InvalidAuthorizationCodeException;
-import org.json.simple.parser.JSONParser;
+import com.umc.StudyFlexBE.entity.Member;
+import com.umc.StudyFlexBE.entity.Role;
+import com.umc.StudyFlexBE.repository.MemberRepository;
+import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,8 +23,12 @@ import org.springframework.web.client.RestTemplate;
 
 
 
+@NoArgsConstructor(force = true)
 @Service
 public class NaverService {
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Value("${naver.client.id}")
     private String NAVER_CLIENT_ID;
@@ -32,6 +41,8 @@ public class NaverService {
 
     private final static String NAVER_AUTH_URI = "https://nid.naver.com";
     private final static String NAVER_API_URI = "https://openapi.naver.com";
+
+
 
 
     public String getNaverLogin() {
@@ -105,5 +116,24 @@ public class NaverService {
         } catch (ParseException e) {
             throw new APICallException("Failed to parse user info response.", e);
         }
+    }
+
+    public Member registerOrAuthenticate(NaverDto naverUser) {
+        Member existingMember = memberRepository.findByEmail(naverUser.getEmail());
+
+        if (existingMember != null) {
+            return existingMember;
+        }
+
+        Member newMember = new Member();
+        newMember.setEmail(naverUser.getEmail());
+        newMember.setName(naverUser.getName());
+
+        newMember.setPassword(passwordEncoder.encode("defaultPassword"));
+
+        newMember.setRole(Role.ROLE_USER);
+        memberRepository.save(newMember);
+
+        return newMember;
     }
 }
