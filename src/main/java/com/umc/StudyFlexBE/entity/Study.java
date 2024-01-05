@@ -91,7 +91,13 @@ public class Study {
         return rankScore;
     }
 
+    public int participationStudy(){
+        if(++currentMembers == maxMembers){
+            status = StudyStatus.COMPLETED;
+        }
 
+        return currentMembers;
+    }
 
 }
 

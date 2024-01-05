@@ -65,18 +65,23 @@ public class StudyService {
 
     }
 
+    @Transactional
     public void participation(Long studyId, Member member){
 
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
+        if(study.getStatus().equals(StudyStatus.COMPLETED)){
+            throw new BaseException(BaseResponseStatus.FULL_STUDY_MEMBER);
+        }
         StudyParticipation studyParticipation = StudyParticipation.builder()
                 .study(study)
                 .member(member)
                 .build();
 
         studyParticipationRepository.save(studyParticipation);
+        study.participationStudy();
     }
 
     @Transactional

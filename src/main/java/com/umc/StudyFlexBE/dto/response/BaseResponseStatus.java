@@ -56,6 +56,10 @@ public enum BaseResponseStatus {
 
     INTERNAL_SERVER_ERROR(false, 500, "서버 내부 오류가 발생했습니다."),
 
+    /**
+     * 7XXX : Study
+     */
+    FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다.")
 
     ;
 
