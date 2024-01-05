@@ -76,6 +76,11 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
 
+    @BatchSize(size = 100)
+    @Builder.Default
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Progress> progressList = new ArrayList<>();
+
 
     @Column(name = "total_progress_rate")
     private Double totalProgressRate;

@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +28,22 @@ public class StudyService {
     private final StudyParticipationRepository studyParticipationRepository;
     private final StudyNoticeRepository studyNoticeRepository;
     private final CategoryRepository categoryRepository;
+    private final ProgressRepository progressRepository;
+
 
     @Autowired
-    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, StudyNoticeRepository studyNoticeRepository, CategoryRepository categoryRepository) {
+    public StudyService(
+            StudyRepository studyRepository,
+            StudyParticipationRepository studyParticipationRepository,
+            StudyNoticeRepository studyNoticeRepository,
+            CategoryRepository categoryRepository,
+            ProgressRepository progressRepository
+    ) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
         this.studyNoticeRepository = studyNoticeRepository;
         this.categoryRepository = categoryRepository;
+        this.progressRepository = progressRepository;
     }
 
     public List<Study> getLatestStudies() {
@@ -86,6 +97,8 @@ public class StudyService {
 
     @Transactional
     public void createStudy(StudyReq studyReq, Member member){
+
+        //스터디 생성 로직
         Category category = categoryRepository.findByName(studyReq.getCategoryName())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_CATEGORY));
 
@@ -102,6 +115,22 @@ public class StudyService {
                 .build();
 
         studyRepository.save(study);
+
+        // 스터디 주차별 정보 생성 로직
+        List<Progress> progressesList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for(int i = 0; i < studyReq.getTargetWeek(); i++){
+            progressesList.add(
+                    Progress.builder()
+                            .startDate(today.plusWeeks(i))
+                            .week(i+1)
+                            .study(study)
+                            .build()
+            );
+        }
+
+        progressRepository.saveAll(progressesList);
     }
 
     private String uploadImg(MultipartFile img, Long memberId) {
