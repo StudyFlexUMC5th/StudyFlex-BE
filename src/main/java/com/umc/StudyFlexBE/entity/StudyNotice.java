@@ -2,9 +2,8 @@ package com.umc.StudyFlexBE.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-
 @Entity
 @Builder
 @Getter

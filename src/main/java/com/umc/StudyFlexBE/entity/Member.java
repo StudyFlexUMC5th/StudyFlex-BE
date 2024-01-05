@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -48,4 +49,8 @@ public class Member {
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
+
+    public List<String> getRoles() {
+        return Collections.singletonList(role.name());
+}
 }
