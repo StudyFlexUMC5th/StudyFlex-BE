@@ -59,8 +59,9 @@ public enum BaseResponseStatus {
     /**
      * 7XXX : Study
      */
-    FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다.")
-
+    FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다."),
+    NO_STUDY_PARTICIPANT(false,7002, "스터디 참여 맴버가 아닙니다."),
+    NO_SUCH_WEEK(false,7003, "해당 주차 학습을 찾을 수 없습니다.")
     ;
 
     private final boolean isSuccess;

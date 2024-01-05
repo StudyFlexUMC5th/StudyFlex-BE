@@ -29,6 +29,7 @@ public class StudyService {
     private final StudyNoticeRepository studyNoticeRepository;
     private final CategoryRepository categoryRepository;
     private final ProgressRepository progressRepository;
+    private final CompletedRepository completedRepository;
 
 
     @Autowired
@@ -37,13 +38,15 @@ public class StudyService {
             StudyParticipationRepository studyParticipationRepository,
             StudyNoticeRepository studyNoticeRepository,
             CategoryRepository categoryRepository,
-            ProgressRepository progressRepository
+            ProgressRepository progressRepository,
+            CompletedRepository completedRepository
     ) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
         this.studyNoticeRepository = studyNoticeRepository;
         this.categoryRepository = categoryRepository;
         this.progressRepository = progressRepository;
+        this.completedRepository = completedRepository;
     }
 
     public List<Study> getLatestStudies() {
@@ -236,5 +239,30 @@ public class StudyService {
                 .notices(studyNoticesRes)
                 .itemSize(studyNoticesRes.size())
                 .build();
+    }
+
+    @Transactional
+    public void checkCompletedStudyWeek(long studyId, int week, Member member) {
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
+        );
+
+        Progress progress = progressRepository.findByWeekAndStudy(week, study).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_WEEK)
+        );
+
+
+
+        completedRepository.save(
+                Completed.builder()
+                        .studyParticipation(studyParticipation)
+                        .progress(progress)
+                        .build()
+        );
+
     }
 }
