@@ -1,12 +1,12 @@
 package com.umc.StudyFlexBE.controller;
 
+import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
-import com.umc.StudyFlexBE.dto.response.BaseResponse;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -65,6 +65,34 @@ public class StudyController {
         return ResponseEntity.ok(rankedStudies);
     }
 
+    @PostMapping("/{study_id}/postNotice")
+    public BaseResponse<?> postStudyNotice(
+            @PathVariable Long study_id,
+            @AuthenticationPrincipal Member member,
+            @RequestBody @Valid StudyNoticeReq studyNoticeReq){
 
+        studyService.postStudyNotice(study_id,member,studyNoticeReq);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "공지사항이 등록되었습니다.");
+    }
 
+    @GetMapping("/{study_id}/notice/{notice_id}")
+    public BaseResponse<?> getStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id, @AuthenticationPrincipal Member member){
+
+        StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
+    }
+
+    @DeleteMapping("/{study_id}/notice/{notice_id}")
+    public BaseResponse<?> deleteStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id, @AuthenticationPrincipal Member member){
+
+        studyService.deleteStudyNotice(study_id, notice_id, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    }
+
+    @GetMapping("/app/studies/{study_id}/notice")
+    public BaseResponse<?> getStudyNotices(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
+        StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, member);
+
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyNotices);
+    }
 }

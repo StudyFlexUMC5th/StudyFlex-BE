@@ -1,9 +1,8 @@
 package com.umc.StudyFlexBE.service;
 
+import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
-import com.umc.StudyFlexBE.dto.response.BaseException;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.StudyAuthorityType;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.*;
 
@@ -133,5 +132,71 @@ public class StudyService {
                 + (study.getTotalProgressRate() * 0.1);
         study.setRankScore(rankScore);
 
+    }
+
+    public void postStudyNotice(Long studyId, Member member, StudyNoticeReq studyNoticeReq){
+        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyNotice studyNotice = StudyNotice.builder()
+                .title(studyNoticeReq.getTitle())
+                .content(studyNoticeReq.getContent())
+                .study(study)
+                .build();
+
+        studyNoticeRepository.save(studyNotice);
+    }
+
+    public StudyNoticeRes getStudyNotice(Long studyId, Long noticeId, Member member){
+        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        StudyNotice studyNotice = studyNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY_NOTICE)
+        );
+
+        return StudyNoticeRes.builder()
+                .title(studyNotice.getTitle())
+                .content(studyNotice.getContent())
+                .createAt(studyNotice.getCreatedAt())
+                .build();
+    }
+
+    public void deleteStudyNotice(Long studyId, Long noticeId, Member member) {
+        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        studyNoticeRepository.deleteById(noticeId);
+    }
+
+    public StudyNoticesInfoRes getStudyNotices(Long studyId, Member member) {
+        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        List<StudyNoticesRes> studyNoticesRes = studyNoticeRepository.findAllByStudy(study)
+                .stream()
+                .map(studyNotice ->
+                        StudyNoticesRes.builder()
+                                .title(studyNotice.getTitle())
+                                .createAt(studyNotice.getCreatedAt())
+                                .build()
+                ).collect(Collectors.toList());
+
+        return StudyNoticesInfoRes.builder()
+                .notices(studyNoticesRes)
+                .itemSize(studyNoticesRes.size())
+                .build();
     }
 }
