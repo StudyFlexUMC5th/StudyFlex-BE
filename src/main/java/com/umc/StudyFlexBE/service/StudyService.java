@@ -79,6 +79,7 @@ public class StudyService {
     @Transactional
     public void participation(Long studyId, Member member){
 
+        //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -92,6 +93,8 @@ public class StudyService {
                 .build();
 
         studyParticipationRepository.save(studyParticipation);
+
+        //스터디 현제 인원 변경
         study.participationStudy();
     }
 
@@ -110,6 +113,7 @@ public class StudyService {
                 .name(studyReq.getStudyName())
                 .thumbnailUrl(uploadImg(studyReq.getThumbnailUrl(), member.getMember_id()))
                 .maxMembers(studyReq.getMaxMembers())
+                .targetWeek(studyReq.getTargetWeek())
                 .currentMembers(1)
                 .completedAt(LocalDateTime.now().plusWeeks(studyReq.getTargetWeek()))
                 .build();

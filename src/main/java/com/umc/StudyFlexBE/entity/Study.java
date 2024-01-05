@@ -39,7 +39,6 @@ public class Study {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "study_status", columnDefinition = "ENUM('RECRUITING', 'COMPLETED')")
-
     private StudyStatus status;
 
 
@@ -70,6 +69,14 @@ public class Study {
     @Column(name = "study_hits")
     private BigInteger hits;
 
+    @Transient
+    private Double rankScore;
+
+    @Column(name = "completed_week")
+    private Integer completedWeek;
+
+    @Column(name = "targer_week")
+    private Integer targetWeek;
 
     @BatchSize(size = 100)
     @Builder.Default
@@ -82,11 +89,6 @@ public class Study {
     private List<Progress> progressList = new ArrayList<>();
 
 
-    @Column(name = "total_progress_rate")
-    private Double totalProgressRate;
-
-    @Transient
-    private Double rankScore;
 
     public void setRankScore(Double rankScore) {
         this.rankScore = rankScore;
@@ -96,13 +98,18 @@ public class Study {
         return rankScore;
     }
 
-    public int participationStudy(){
-        if(++currentMembers == maxMembers){
+    public int participationStudy() {
+        ++currentMembers;
+        if (currentMembers.equals(maxMembers)) {
             status = StudyStatus.COMPLETED;
         }
 
+        completedWeek = 0;
         return currentMembers;
     }
 
+    public Double getTotalProgressRate(){
+        return (completedWeek*1.0)/targetWeek;
+    }
 }
 
