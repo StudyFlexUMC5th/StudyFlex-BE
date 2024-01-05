@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public interface StudyFlexNoticeRepository extends JpaRepository<Notice, Long> {
-    List<Notice> findByMemberId(Long memberId);
-
-    List<Notice> findByTitleContaining(String title);
+//    List<Notice> findByMemberId(Long memberId);
+//
+//    List<Notice> findByTitleContaining(String title);
 
     @Query("SELECT n FROM Notice n WHERE n.title LIKE %:searchTerm% OR n.content LIKE %:searchTerm%")
     Page<Notice> findByTitleOrContentContaining(@Param("searchTerm") String searchTerm, Pageable pageable);

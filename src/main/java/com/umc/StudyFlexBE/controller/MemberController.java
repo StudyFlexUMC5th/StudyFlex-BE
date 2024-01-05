@@ -137,4 +137,12 @@ public class MemberController {
 
         return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "굿");
     }
+
+
+
+
+
+
+
+
 }

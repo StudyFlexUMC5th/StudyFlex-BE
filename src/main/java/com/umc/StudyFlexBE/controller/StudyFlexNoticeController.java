@@ -56,7 +56,7 @@ public class StudyFlexNoticeController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<BaseResponse<StudyFlexNoticeListResponseDto>> searchNotices(
             @RequestParam(required = false) String query,
             @RequestParam(defaultValue = "0") int page,

@@ -43,6 +43,8 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RestTemplate restTemplate;
 
+
+
     public boolean checkEmail(String email) {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
@@ -59,6 +61,7 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         member.setName(signUpDto.getName());
         member.setSchool(signUpDto.getSchool());
+        member.setRole(ROLE_USER);
         memberRepository.save(member);
     }
 
@@ -86,12 +89,20 @@ public class MemberService {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getEmail(), loginDto.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject()
-                .authenticate(usernamePasswordAuthenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenProvider.createToken(authentication);
-        String token = "Bearer " + jwt;
-        return token;
+
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject()
+                    .authenticate(usernamePasswordAuthenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtTokenProvider.createToken(authentication);
+            String token = "Bearer " + jwt;
+            return token;
+
+        } catch (Exception e) {
+            System.out.println("Authentication failed: " + e.getMessage());
+            // Optionally log more details or rethrow the exception
+            return null;
+        }
     }
 
 
@@ -148,6 +159,7 @@ public class MemberService {
             throw new BaseException(BaseResponseStatus.GET_OAUTH_INFO_FAILED);
         }
 
+
     }
 
 
@@ -159,4 +171,5 @@ public class MemberService {
         member.setRole(ROLE_USER);
         memberRepository.save(member);
     }
+
 }

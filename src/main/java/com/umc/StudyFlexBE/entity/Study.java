@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.BatchSize;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -37,12 +39,15 @@ public class Study {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "study_status", columnDefinition = "ENUM('RECRUITING', 'COMPLETED')")
+
     private StudyStatus status;
+
 
     @Column(name = "thumbnail_url", length = 2083)
     private String thumbnailUrl;
 
     @Column(name = "study_created_at", updatable = false)
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -65,9 +70,12 @@ public class Study {
     @Column(name = "study_hits")
     private BigInteger hits;
 
+
     @BatchSize(size = 100)
+    @Builder.Default
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<StudyParticipation> studyParticipationList = new ArrayList<>();
+
 
     @Column(name = "total_progress_rate")
     private Double totalProgressRate;
@@ -78,9 +86,12 @@ public class Study {
     public void setRankScore(Double rankScore) {
         this.rankScore = rankScore;
     }
+
     public Double getRankScore() {
-        return rankScore; 
+        return rankScore;
     }
+
+
 
 }
 
