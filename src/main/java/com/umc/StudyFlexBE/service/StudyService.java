@@ -242,7 +242,7 @@ public class StudyService {
     }
 
     @Transactional
-    public double checkCompletedStudyWeek(long studyId, int week, Member member) {
+    public ProgressReq checkCompletedStudyWeek(long studyId, int week, Member member) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -266,6 +266,12 @@ public class StudyService {
 
         progress.addCompletedNumber();
 
-        return (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+        double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+
+        return ProgressReq.builder()
+                .completed(true)
+                .participant_rate(rate)
+                .start_date(progress.getStartDate())
+                .build();
     }
 }

@@ -98,12 +98,7 @@ public class StudyController {
 
     @GetMapping("/app/studies/{study_id}/completed")
     public BaseResponse<?> checkCompletedStudyWeek(@PathVariable Long study_id, @RequestParam int week, @AuthenticationPrincipal Member member){
-        double progress = studyService.checkCompletedStudyWeek(study_id, week, member);
-        CompletedCheckReq req = CompletedCheckReq.builder()
-                .week(week)
-                .completed(true)
-                .progress(progress)
-                .build();
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, req);
+        ProgressReq progressReq = studyService.checkCompletedStudyWeek(study_id, week, member);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, progressReq);
     }
 }
