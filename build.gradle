@@ -45,6 +45,8 @@ dependencies {
 	// school web mail
 	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
+	// password mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 
 	compileOnly 'org.projectlombok:lombok'
