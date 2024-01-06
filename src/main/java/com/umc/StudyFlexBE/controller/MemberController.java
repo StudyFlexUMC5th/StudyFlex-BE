@@ -1,6 +1,7 @@
 package com.umc.StudyFlexBE.controller;
 
 
+import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
 import com.umc.StudyFlexBE.dto.request.CheckAuthCodeDto;
 import com.umc.StudyFlexBE.dto.request.LoginDto;
 import com.umc.StudyFlexBE.dto.request.SendAuthCodeDto;
@@ -35,6 +36,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final RestTemplate restTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
     @Value("${mail.api.key}")
     private String mail_api_key;
     @GetMapping("/checkEmail/{email}")
@@ -133,9 +135,11 @@ public class MemberController {
 
     @GetMapping("testauth")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public BaseResponse<?> test() {
-
-        return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "굿");
+    public BaseResponse<?> test( ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        System.out.println(email);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "굿");
     }
 
 

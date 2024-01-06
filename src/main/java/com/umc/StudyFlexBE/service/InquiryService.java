@@ -2,6 +2,8 @@ package com.umc.StudyFlexBE.service;
 
 import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryAnswerRequestDto;
 import com.umc.StudyFlexBE.dto.request.Inquiry.InquiryUploadRequestDto;
+import com.umc.StudyFlexBE.dto.response.BaseException;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryAnswerResponseDto;
 import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryListResponseDto;
 import com.umc.StudyFlexBE.dto.response.Inquiry.InquiryResponseDto;
@@ -32,9 +34,11 @@ public class InquiryService {
         this.inquiryAnswerRepository = inquiryAnswerRepository;
     }
 
-    public Inquiry createInquiry(Long memberId, InquiryUploadRequestDto request) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+    public Inquiry createInquiry(String email, InquiryUploadRequestDto request) {
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
         Inquiry inquiry = new Inquiry();
         inquiry.setMember_id(member);
         inquiry.setTitle(request.getTitle());
@@ -120,12 +124,14 @@ public class InquiryService {
         );
     }
 
-    public InquiryAnswerResponseDto postAnswer(Long inquiryId, InquiryAnswerRequestDto request, Long memberId) {
+    public InquiryAnswerResponseDto postAnswer(Long inquiryId, InquiryAnswerRequestDto request, String email) {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new RuntimeException("Inquiry not found"));
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
 
         InquiryAnswer answer = new InquiryAnswer();
         answer.setInquiry(inquiry);
