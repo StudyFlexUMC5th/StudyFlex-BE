@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ProgressReq {
+public class ProgressRes {
     private int week;
     private LocalDate start_date;
     private double participant_rate;

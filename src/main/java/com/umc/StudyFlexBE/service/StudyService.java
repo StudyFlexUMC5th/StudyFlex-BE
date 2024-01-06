@@ -242,7 +242,7 @@ public class StudyService {
     }
 
     @Transactional
-    public ProgressReq checkCompletedStudyWeek(long studyId, int week, Member member) {
+    public ProgressRes checkCompletedStudyWeek(long studyId, int week, Member member) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -268,14 +268,14 @@ public class StudyService {
 
         double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
 
-        return ProgressReq.builder()
+        return ProgressRes.builder()
                 .completed(true)
                 .participant_rate(rate)
                 .start_date(progress.getStartDate())
                 .build();
     }
 
-    public List<ProgressReq> getStudyProgressList(long studyId, Member member){
+    public List<ProgressRes> getStudyProgressList(long studyId, Member member){
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -290,7 +290,7 @@ public class StudyService {
                     boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
                     double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
 
-                    return ProgressReq.builder()
+                    return ProgressRes.builder()
                             .week(progress.getWeek())
                             .completed(completed)
                             .start_date(progress.getStartDate())
@@ -298,5 +298,20 @@ public class StudyService {
                             .build();
                 }).collect(Collectors.toList());
 
+    }
+
+    public StudyDetailRes getStudyDetail(long studyId){
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
+
+        return StudyDetailRes.builder()
+                .max_members(study.getMaxMembers())
+                .current_members(study.getCurrentMembers())
+                .study_status(study.getStatus())
+                .total_progress_rate(progress)
+                .build();
     }
 }
