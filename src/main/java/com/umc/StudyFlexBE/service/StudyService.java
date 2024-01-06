@@ -242,7 +242,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void checkCompletedStudyWeek(long studyId, int week, Member member) {
+    public double checkCompletedStudyWeek(long studyId, int week, Member member) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -264,5 +264,8 @@ public class StudyService {
                         .build()
         );
 
+        progress.addCompletedNumber();
+
+        return (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
     }
 }

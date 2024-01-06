@@ -3,8 +3,6 @@ package com.umc.StudyFlexBE.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Fetch;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
@@ -30,5 +28,9 @@ public class Progress {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     private Study study;
+
+    public int addCompletedNumber(){
+        return ++completedNumber;
+    }
 
 }
