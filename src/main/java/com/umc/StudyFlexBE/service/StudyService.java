@@ -274,4 +274,29 @@ public class StudyService {
                 .start_date(progress.getStartDate())
                 .build();
     }
+
+    public List<ProgressReq> getStudyProgressList(long studyId, Member member){
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
+        );
+
+        return progressRepository.findAllByStudy(study)
+                .stream()
+                .map(progress -> {
+                    boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
+                    double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+
+                    return ProgressReq.builder()
+                            .week(progress.getWeek())
+                            .completed(completed)
+                            .start_date(progress.getStartDate())
+                            .participant_rate(rate)
+                            .build();
+                }).collect(Collectors.toList());
+
+    }
 }
