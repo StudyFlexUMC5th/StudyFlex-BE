@@ -111,10 +111,14 @@ public class MemberController {
     @PostMapping("/sendAuthCode")
     public BaseResponse<?> senAuthCode(@RequestBody SendAuthCodeDto sendAuthCodeDto) {
         try {
+            UnivCert.clear(mail_api_key,sendAuthCodeDto.getEmail());
             Map<String, Object> result = UnivCert.certify(mail_api_key, sendAuthCodeDto.getEmail(),
                     sendAuthCodeDto.getUnivName(), false);
             if (result.isEmpty()) {
                 return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
+            }
+            if (result.get("success").equals(false)) {
+                return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
             }
             return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 발송 완료.");
         } catch (Exception e) {
