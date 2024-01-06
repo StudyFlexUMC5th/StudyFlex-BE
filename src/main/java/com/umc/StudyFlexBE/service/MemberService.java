@@ -2,6 +2,7 @@ package com.umc.StudyFlexBE.service;
 
 
 import static com.umc.StudyFlexBE.entity.MemberType.general;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
 import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -168,7 +169,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email);
         member.setSchool(school);
         member.setWeb_email(webEmail);
-        member.setRole(ROLE_USER);
+        member.setRole(ROLE_CERTIFIED);
         memberRepository.save(member);
     }
 

@@ -39,6 +39,7 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
     @Value("${mail.api.key}")
     private String mail_api_key;
+
     @GetMapping("/checkEmail/{email}")
     public BaseResponse<?> checkEmail(@PathVariable String email) {
         try {
@@ -109,44 +110,51 @@ public class MemberController {
 
 
     @PostMapping("/sendAuthCode")
-    public BaseResponse<?> senAuthCode(@RequestBody SendAuthCodeDto sendAuthCodeDto)  {
+    public BaseResponse<?> senAuthCode(@RequestBody SendAuthCodeDto sendAuthCodeDto) {
         try {
-            Map<String, Object> result = UnivCert.certify(mail_api_key, sendAuthCodeDto.getEmail(), sendAuthCodeDto.getUnivName(), true);
+            Map<String, Object> result = UnivCert.certify(mail_api_key, sendAuthCodeDto.getEmail(),
+                    sendAuthCodeDto.getUnivName(), false);
             if (result.isEmpty()) {
                 return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
             }
             return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 발송 완료.");
-        } catch (Exception e){
+        } catch (Exception e) {
             return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
         }
     }
 
     @PostMapping("/checkAuthCode")
     public BaseResponse<?> checkAuthCode(@RequestBody CheckAuthCodeDto checkAuthCodeDto) throws IOException {
-        Map<String, Object> result =UnivCert.certifyCode(mail_api_key,checkAuthCodeDto.getWebEmail(),checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getCode());
+        Map<String, Object> result = UnivCert.certifyCode(mail_api_key, checkAuthCodeDto.getWebEmail(),
+                checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getCode());
         if (result.isEmpty()) {
             return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
         }
+        if (result.get("success").equals(false)) {
+            return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) authentication.getPrincipal();
+        String email = authentication.getName();
+        System.out.println(email);
         memberService.certifyWebMail(email, checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getWebEmail());
-        return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 확인 완료.");
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "인증 코드 확인 완료.");
     }
 
     @GetMapping("testauth")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public BaseResponse<?> test( ) {
+    public BaseResponse<?> test() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         System.out.println(email);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, "굿");
     }
 
-
-
-
-
-
-
+    @PostMapping("clear")
+    public BaseResponse<?> clearing() throws IOException {
+        UnivCert.list(mail_api_key);
+        UnivCert.clear(mail_api_key);
+        UnivCert.list(mail_api_key);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "clear 완료");
+    }
 
 }
