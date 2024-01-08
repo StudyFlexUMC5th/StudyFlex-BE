@@ -43,6 +43,9 @@ public class InquiryService {
         inquiry.setMember_id(member);
         inquiry.setTitle(request.getTitle());
         inquiry.setContent(request.getContent());
+        inquiry.setIs_answered(false);
+        inquiry.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        inquiry.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         inquiry.setIs_opened(true);
         inquiry.setView(0);
 
@@ -74,6 +77,9 @@ public class InquiryService {
     public InquiryResponseDto getInquiryDetail(Long inquiryId) {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new RuntimeException("Inquiry not found"));
+
+        inquiry.setView(inquiry.getView() + 1);
+        inquiryRepository.save(inquiry);
 
         InquiryResponseDto.AnswerResponse answerResponse = null;
         boolean isAnswered = inquiryAnswerRepository.findByInquiry(inquiry).isPresent();

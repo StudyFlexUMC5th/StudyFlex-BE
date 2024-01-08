@@ -19,7 +19,6 @@ public class StudyFlexNoticeListResponseDto {
     public static class NoticeSummary {
         private Long id;
         private String title;
-        private String writer;
         private int views;
     }
 }

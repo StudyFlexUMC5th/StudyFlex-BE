@@ -11,7 +11,6 @@ public class StudyFlexNoticeResponseDto {
     private Long id;
     private Integer view;
     private String title;
-    private Long writer;
     private String content;
     private Timestamp createdAt;
     private Timestamp updatedAt;

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,12 @@ public class StudyFlexNoticeService {
     }
 
     public Notice createNotice(StudyFlexNoticeUploadDto request) throws BaseException {
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_EMAIL));
 
         Notice notice = new Notice();
-        notice.setMember(member);
         notice.setTitle(request.getTitle());
         notice.setContent(request.getContent());
+        notice.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        notice.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         notice.setView(0);
 
         return StudyFlexNoticeRepository.save(notice);
@@ -42,13 +42,15 @@ public class StudyFlexNoticeService {
 
     public StudyFlexNoticeResponseDto getNotice(Long noticeId) throws BaseException {
         Notice notice = StudyFlexNoticeRepository.findById(noticeId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.BAD_REQUEST)); //need to change err code
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.BAD_REQUEST));
+
+        notice.setView(notice.getView() + 1);
+        StudyFlexNoticeRepository.save(notice);
 
         return new StudyFlexNoticeResponseDto(
                 notice.getId(),
                 notice.getView(),
                 notice.getTitle(),
-                notice.getMember().getMember_id(),
                 notice.getContent(),
                 notice.getCreated_at(),
                 notice.getUpdated_at()
@@ -63,7 +65,6 @@ public class StudyFlexNoticeService {
                 .map(notice -> new StudyFlexNoticeListResponseDto.NoticeSummary(
                         notice.getId(),
                         notice.getTitle(),
-                        notice.getMember().getName(),
                         notice.getView()
                 ))
                 .collect(Collectors.toList());
@@ -84,7 +85,6 @@ public class StudyFlexNoticeService {
                 .map(notice -> new StudyFlexNoticeListResponseDto.NoticeSummary(
                         notice.getId(),
                         notice.getTitle(),
-                        notice.getMember().getName(),
                         notice.getView()
                 ))
                 .collect(Collectors.toList());
