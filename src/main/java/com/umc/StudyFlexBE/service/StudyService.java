@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +28,25 @@ public class StudyService {
     private final StudyParticipationRepository studyParticipationRepository;
     private final StudyNoticeRepository studyNoticeRepository;
     private final CategoryRepository categoryRepository;
+    private final ProgressRepository progressRepository;
+    private final CompletedRepository completedRepository;
+
 
     @Autowired
-    public StudyService(StudyRepository studyRepository, StudyParticipationRepository studyParticipationRepository, StudyNoticeRepository studyNoticeRepository, CategoryRepository categoryRepository) {
+    public StudyService(
+            StudyRepository studyRepository,
+            StudyParticipationRepository studyParticipationRepository,
+            StudyNoticeRepository studyNoticeRepository,
+            CategoryRepository categoryRepository,
+            ProgressRepository progressRepository,
+            CompletedRepository completedRepository
+    ) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
         this.studyNoticeRepository = studyNoticeRepository;
         this.categoryRepository = categoryRepository;
+        this.progressRepository = progressRepository;
+        this.completedRepository = completedRepository;
     }
 
     public List<Study> getLatestStudies() {
@@ -65,22 +79,32 @@ public class StudyService {
 
     }
 
+    @Transactional
     public void participation(Long studyId, Member member){
 
+        //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
+        if(study.getStatus().equals(StudyStatus.COMPLETED)){
+            throw new BaseException(BaseResponseStatus.FULL_STUDY_MEMBER);
+        }
         StudyParticipation studyParticipation = StudyParticipation.builder()
                 .study(study)
                 .member(member)
                 .build();
 
         studyParticipationRepository.save(studyParticipation);
+
+        //스터디 현제 인원 변경
+        study.participationStudy();
     }
 
     @Transactional
     public void createStudy(StudyReq studyReq, Member member){
+
+        //스터디 생성 로직
         Category category = categoryRepository.findByName(studyReq.getCategoryName())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_CATEGORY));
 
@@ -92,11 +116,28 @@ public class StudyService {
                 .name(studyReq.getStudyName())
                 .thumbnailUrl(uploadImg(studyReq.getThumbnailUrl(), member.getMember_id()))
                 .maxMembers(studyReq.getMaxMembers())
+                .targetWeek(studyReq.getTargetWeek())
                 .currentMembers(1)
                 .completedAt(LocalDateTime.now().plusWeeks(studyReq.getTargetWeek()))
                 .build();
 
         studyRepository.save(study);
+
+        // 스터디 주차별 정보 생성 로직
+        List<Progress> progressesList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for(int i = 0; i < studyReq.getTargetWeek(); i++){
+            progressesList.add(
+                    Progress.builder()
+                            .startDate(today.plusWeeks(i))
+                            .week(i+1)
+                            .study(study)
+                            .build()
+            );
+        }
+
+        progressRepository.saveAll(progressesList);
     }
 
     private String uploadImg(MultipartFile img, Long memberId) {
@@ -197,6 +238,80 @@ public class StudyService {
         return StudyNoticesInfoRes.builder()
                 .notices(studyNoticesRes)
                 .itemSize(studyNoticesRes.size())
+                .build();
+    }
+
+    @Transactional
+    public ProgressRes checkCompletedStudyWeek(long studyId, int week, Member member) {
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
+        );
+
+        Progress progress = progressRepository.findByWeekAndStudy(week, study).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_WEEK)
+        );
+
+
+
+        completedRepository.save(
+                Completed.builder()
+                        .studyParticipation(studyParticipation)
+                        .progress(progress)
+                        .build()
+        );
+
+        progress.addCompletedNumber();
+
+        double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+
+        return ProgressRes.builder()
+                .completed(true)
+                .participant_rate(rate)
+                .start_date(progress.getStartDate())
+                .build();
+    }
+
+    public List<ProgressRes> getStudyProgressList(long studyId, Member member){
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
+        );
+
+        return progressRepository.findAllByStudy(study)
+                .stream()
+                .map(progress -> {
+                    boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
+                    double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+
+                    return ProgressRes.builder()
+                            .week(progress.getWeek())
+                            .completed(completed)
+                            .start_date(progress.getStartDate())
+                            .participant_rate(rate)
+                            .build();
+                }).collect(Collectors.toList());
+
+    }
+
+    public StudyDetailRes getStudyDetail(long studyId){
+        Study study = studyRepository.findById(studyId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+        );
+
+        double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
+
+        return StudyDetailRes.builder()
+                .max_members(study.getMaxMembers())
+                .current_members(study.getCurrentMembers())
+                .study_status(study.getStatus())
+                .total_progress_rate(progress)
                 .build();
     }
 }
