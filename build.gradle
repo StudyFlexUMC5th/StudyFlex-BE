@@ -48,6 +48,9 @@ dependencies {
 	// password mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	//mysql
+	implementation 'mysql:mysql-connector-java:8.0.26'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
