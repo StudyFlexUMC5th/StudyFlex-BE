@@ -12,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/notices")
+@RequestMapping("/app/notices")
 public class StudyFlexNoticeController {
     private final StudyFlexNoticeService StudyFlexNoticeService;
 
@@ -22,7 +22,7 @@ public class StudyFlexNoticeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BaseResponse<String>> createNotice(@RequestBody StudyFlexNoticeUploadDto request) {
         try {
             Notice notice = StudyFlexNoticeService.createNotice(request);
