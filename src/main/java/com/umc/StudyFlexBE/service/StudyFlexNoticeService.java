@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ public class StudyFlexNoticeService {
         Notice notice = new Notice();
         notice.setTitle(request.getTitle());
         notice.setContent(request.getContent());
+        notice.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        notice.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         notice.setView(0);
 
         return StudyFlexNoticeRepository.save(notice);
@@ -39,7 +42,10 @@ public class StudyFlexNoticeService {
 
     public StudyFlexNoticeResponseDto getNotice(Long noticeId) throws BaseException {
         Notice notice = StudyFlexNoticeRepository.findById(noticeId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.BAD_REQUEST)); //need to change err code
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.BAD_REQUEST));
+
+        notice.setView(notice.getView() + 1);
+        StudyFlexNoticeRepository.save(notice);
 
         return new StudyFlexNoticeResponseDto(
                 notice.getId(),

@@ -78,6 +78,9 @@ public class InquiryService {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new RuntimeException("Inquiry not found"));
 
+        inquiry.setView(inquiry.getView() + 1);
+        inquiryRepository.save(inquiry);
+
         InquiryResponseDto.AnswerResponse answerResponse = null;
         boolean isAnswered = inquiryAnswerRepository.findByInquiry(inquiry).isPresent();
         if (isAnswered) {
