@@ -32,6 +32,9 @@ public enum BaseResponseStatus {
 
     SEND_EMAIL_FAILED(false,3005 ,"인증코드 요청 실패" ),
     WEB_MAIL_CODE_FAILED(false, 3006, "인증코드 불일치"),
+    MAIL_SEND_FAILED(false, 3007,"이메일 전송 실패" ),
+    CHANGE_EMAIL_FAILED(false,3008 ,"이메일 변경 실패" ),
+    CHANGE_PASSWORD_FAILED(false,3009 ,"비밀번호 변경 실패" ),
 
     /**
      * 4XXX : Post

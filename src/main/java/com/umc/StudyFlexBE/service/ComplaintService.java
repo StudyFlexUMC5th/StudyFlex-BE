@@ -27,9 +27,12 @@ public class ComplaintService {
         this.studyRepository = studyRepository;
     }
 
-    public ComplaintResponseDto postComplaint(Long memberId, Long studyId, ComplaintRequestDto request) {
-        Member complaintMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.MEMBER_NOT_FOUND));
+    public ComplaintResponseDto postComplaint(String email, Long studyId, ComplaintRequestDto request) {
+        Member complaintMember = memberRepository.findByEmail(email);
+        if (complaintMember == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
+
 
         // studyId를 사용하여 리더의 ID를 조회
         Long leaderId = studyRepository.findById(studyId)

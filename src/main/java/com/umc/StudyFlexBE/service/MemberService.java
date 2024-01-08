@@ -2,6 +2,7 @@ package com.umc.StudyFlexBE.service;
 
 
 import static com.umc.StudyFlexBE.entity.MemberType.general;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
 import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,12 +17,15 @@ import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
 import com.umc.StudyFlexBE.repository.MemberRepository;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -42,7 +46,7 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RestTemplate restTemplate;
-
+    private final JavaMailSender javaMailSender;
 
 
     public boolean checkEmail(String email) {
@@ -106,8 +110,6 @@ public class MemberService {
     }
 
 
-
-
     public KaKaoOAuthToken getKakaoToken(String code) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -168,8 +170,61 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email);
         member.setSchool(school);
         member.setWeb_email(webEmail);
-        member.setRole(ROLE_USER);
+        member.setRole(ROLE_CERTIFIED);
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void deleteMember(String email) {
+
+        Long memberId = memberRepository.deleteByEmail(email);
+
+    }
+
+
+    @Transactional
+    public void sendPasswordMail(String email, String password) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
+
+        try {
+            // 1. 메일 수신자 설정
+            messageHelper.setTo(email);
+            // 2. 메일 제목 설정
+            messageHelper.setSubject("[StudyFlex] Your New Password");
+            // 3. 메일 내용 설정
+            String mailContent = "[StudyFlex] Your new password is: " + password;
+            messageHelper.setText(mailContent, true);
+            // 4. 메일 전송
+            javaMailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new BaseException(BaseResponseStatus.MAIL_SEND_FAILED);
+        }
+
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
+        member.setPassword(passwordEncoder.encode(password));
+        memberRepository.save(member);
+
+
+    }
+
+
+    @Transactional
+    public void changeEmail(String email, String newEmail) {
+
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
+        if(checkEmail(newEmail) == false){
+            throw new BaseException(BaseResponseStatus.CHANGE_EMAIL_FAILED);
+        }
+
+        member.setEmail(newEmail);
+        memberRepository.save(member);
+
+    }
 }
