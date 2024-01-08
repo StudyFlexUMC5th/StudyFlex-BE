@@ -78,7 +78,7 @@ public class InquiryController {
     }
 
     @PostMapping("/{inquiryId}/answer")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BaseResponse<InquiryAnswerResponseDto>> postAnswer(
             @PathVariable Long inquiryId,
             @RequestBody InquiryAnswerRequestDto request) {
