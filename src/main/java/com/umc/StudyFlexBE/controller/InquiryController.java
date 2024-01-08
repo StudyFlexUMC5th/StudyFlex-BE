@@ -12,6 +12,7 @@ import com.umc.StudyFlexBE.entity.Inquiry;
 import com.umc.StudyFlexBE.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/app/inquiry")
+@RequestMapping("/app/inquiries")
 public class InquiryController {
     private final InquiryService inquiryService;
 
@@ -32,7 +33,7 @@ public class InquiryController {
         this.inquiryService = inquiryService;
     }
 
-    @PostMapping("/postNotice")
+    @PostMapping
     public ResponseEntity<BaseResponse<InquiryUploadResponseDto>> postInquiry(
             @RequestBody InquiryUploadRequestDto request) {
         try {
@@ -77,6 +78,7 @@ public class InquiryController {
     }
 
     @PostMapping("/{inquiryId}/answer")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BaseResponse<InquiryAnswerResponseDto>> postAnswer(
             @PathVariable Long inquiryId,
             @RequestBody InquiryAnswerRequestDto request) {

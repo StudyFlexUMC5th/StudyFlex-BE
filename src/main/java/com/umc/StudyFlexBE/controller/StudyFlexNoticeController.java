@@ -8,6 +8,7 @@ import com.umc.StudyFlexBE.entity.Notice;
 import com.umc.StudyFlexBE.service.StudyFlexNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class StudyFlexNoticeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BaseResponse<String>> createNotice(@RequestBody StudyFlexNoticeUploadDto request) {
         try {
             Notice notice = StudyFlexNoticeService.createNotice(request);
