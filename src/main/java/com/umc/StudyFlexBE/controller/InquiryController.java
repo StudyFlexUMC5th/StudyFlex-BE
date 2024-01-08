@@ -39,6 +39,7 @@ public class InquiryController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getName();
+            System.out.println(email);
             Inquiry inquiry = inquiryService.createInquiry(email, request);
             return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, new InquiryUploadResponseDto(inquiry.getId())));
         } catch (Exception e) {
@@ -58,7 +59,7 @@ public class InquiryController {
         }
     }
 
-    @PostMapping("/{inquiryId}")
+    @GetMapping("/{inquiryId}")
     public ResponseEntity<BaseResponse<InquiryResponseDto>> getInquiryDetail(@PathVariable Long inquiryId) {
         try {
             InquiryResponseDto inquiryDetail = inquiryService.getInquiryDetail(inquiryId);

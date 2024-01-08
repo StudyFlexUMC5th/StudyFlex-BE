@@ -43,6 +43,9 @@ public class InquiryService {
         inquiry.setMember_id(member);
         inquiry.setTitle(request.getTitle());
         inquiry.setContent(request.getContent());
+        inquiry.setIs_answered(false);
+        inquiry.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        inquiry.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         inquiry.setIs_opened(true);
         inquiry.setView(0);
 

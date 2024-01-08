@@ -28,11 +28,8 @@ public class StudyFlexNoticeService {
     }
 
     public Notice createNotice(StudyFlexNoticeUploadDto request) throws BaseException {
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_EMAIL));
 
         Notice notice = new Notice();
-        notice.setMember(member);
         notice.setTitle(request.getTitle());
         notice.setContent(request.getContent());
         notice.setView(0);
@@ -48,7 +45,6 @@ public class StudyFlexNoticeService {
                 notice.getId(),
                 notice.getView(),
                 notice.getTitle(),
-                notice.getMember().getMember_id(),
                 notice.getContent(),
                 notice.getCreated_at(),
                 notice.getUpdated_at()
@@ -63,7 +59,6 @@ public class StudyFlexNoticeService {
                 .map(notice -> new StudyFlexNoticeListResponseDto.NoticeSummary(
                         notice.getId(),
                         notice.getTitle(),
-                        notice.getMember().getName(),
                         notice.getView()
                 ))
                 .collect(Collectors.toList());
@@ -84,7 +79,6 @@ public class StudyFlexNoticeService {
                 .map(notice -> new StudyFlexNoticeListResponseDto.NoticeSummary(
                         notice.getId(),
                         notice.getTitle(),
-                        notice.getMember().getName(),
                         notice.getView()
                 ))
                 .collect(Collectors.toList());
