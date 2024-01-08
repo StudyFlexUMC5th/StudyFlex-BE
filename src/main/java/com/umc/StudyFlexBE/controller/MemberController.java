@@ -3,6 +3,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.request.CheckAuthCodeDto;
 import com.umc.StudyFlexBE.dto.request.LoginDto;
+import com.umc.StudyFlexBE.dto.request.SearchPasswordDto;
 import com.umc.StudyFlexBE.dto.request.SendAuthCodeDto;
 import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
@@ -20,13 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("app/member")
@@ -34,9 +35,10 @@ import org.springframework.web.client.RestTemplate;
 public class MemberController {
 
     private final MemberService memberService;
-    private final RestTemplate restTemplate;
+
     @Value("${mail.api.key}")
     private String mail_api_key;
+
     @GetMapping("/checkEmail/{email}")
     public BaseResponse<?> checkEmail(@PathVariable String email) {
         try {
@@ -107,42 +109,89 @@ public class MemberController {
 
 
     @PostMapping("/sendAuthCode")
-    public BaseResponse<?> senAuthCode(@RequestBody SendAuthCodeDto sendAuthCodeDto)  {
+    public BaseResponse<?> senAuthCode(@RequestBody SendAuthCodeDto sendAuthCodeDto) {
         try {
-            Map<String, Object> result = UnivCert.certify(mail_api_key, sendAuthCodeDto.getEmail(), sendAuthCodeDto.getUnivName(), true);
+            UnivCert.clear(mail_api_key,sendAuthCodeDto.getEmail());
+            Map<String, Object> result = UnivCert.certify(mail_api_key, sendAuthCodeDto.getEmail(),
+                    sendAuthCodeDto.getUnivName(), false);
             if (result.isEmpty()) {
                 return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
             }
+            if (result.get("success").equals(false)) {
+                return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
+            }
             return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 발송 완료.");
-        } catch (Exception e){
+        } catch (Exception e) {
             return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
         }
     }
 
     @PostMapping("/checkAuthCode")
     public BaseResponse<?> checkAuthCode(@RequestBody CheckAuthCodeDto checkAuthCodeDto) throws IOException {
-        Map<String, Object> result =UnivCert.certifyCode(mail_api_key,checkAuthCodeDto.getWebEmail(),checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getCode());
+        Map<String, Object> result = UnivCert.certifyCode(mail_api_key, checkAuthCodeDto.getWebEmail(),
+                checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getCode());
         if (result.isEmpty()) {
             return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
         }
+        if (result.get("success").equals(false)) {
+            return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) authentication.getPrincipal();
+        String email = authentication.getName();
+        System.out.println(email);
         memberService.certifyWebMail(email, checkAuthCodeDto.getUnivName(), checkAuthCodeDto.getWebEmail());
-        return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 확인 완료.");
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "인증 코드 확인 완료.");
     }
+
+    @DeleteMapping("/deleteMember")
+    public BaseResponse<?> deleteMember(String password) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        memberService.deleteMember(email);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "회원 삭제 완료.");
+    }
+
+
+    @GetMapping("/searchPassword")
+    public BaseResponse<?> searchPassword(@RequestBody SearchPasswordDto searchPasswordDto) {
+        try {
+            memberService.sendPasswordMail(searchPasswordDto.getEmail(), searchPasswordDto.getPassword());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "새로운 비밀번호 전송 완료.");
+        } catch (BaseException e) {
+            return new BaseResponse<>(BaseResponseStatus.CHANGE_PASSWORD_FAILED);
+        }
+    }
+
+    @PostMapping("/changeEmail")
+    public BaseResponse<?> changeEmail(String newEmail) {
+        try {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        memberService.changeEmail(email , newEmail);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "이메일 변경 완료.");
+        } catch (BaseException e) {
+            return new BaseResponse<>(BaseResponseStatus.CHANGE_EMAIL_FAILED);
+        }
+
+    }
+
 
     @GetMapping("testauth")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public BaseResponse<?> test() {
 
-        return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "굿");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        System.out.println(email);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "굿");
     }
 
-
-
-
-
-
-
+    @PostMapping("clear")
+    public BaseResponse<?> clearing() throws IOException {
+        UnivCert.list(mail_api_key);
+        UnivCert.clear(mail_api_key);
+        UnivCert.list(mail_api_key);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "clear 완료");
+    }
 
 }
