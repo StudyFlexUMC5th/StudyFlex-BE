@@ -89,26 +89,26 @@ public class StudyController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
 
-    @GetMapping("/app/studies/{study_id}/notice")
+    @GetMapping("/{study_id}/notice")
     public BaseResponse<?> getStudyNotices(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
         StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, member);
 
         return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyNotices);
     }
 
-    @GetMapping("/app/studies/{study_id}/completed")
+    @GetMapping("/{study_id}/completed")
     public BaseResponse<?> checkCompletedStudyWeek(@PathVariable Long study_id, @RequestParam int week, @AuthenticationPrincipal Member member){
         ProgressRes progressReq = studyService.checkCompletedStudyWeek(study_id, week, member);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, progressReq);
     }
 
-    @GetMapping("/app/studies/{study_id}/progress")
+    @GetMapping("/{study_id}/progress")
     public BaseResponse<?> getStudyProgressList(@PathVariable Long study_id, @AuthenticationPrincipal Member member){
         List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, member);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyProgressList);
     }
 
-    @GetMapping("/app/studies/{study_id}/details")
+    @GetMapping("/{study_id}/details")
     public BaseResponse<?> getStudyDetail(@PathVariable Long study_id){
         StudyDetailRes studyDetail = studyService.getStudyDetail(study_id);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyDetail);
