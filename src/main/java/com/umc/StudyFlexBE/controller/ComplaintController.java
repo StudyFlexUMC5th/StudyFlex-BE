@@ -7,10 +7,13 @@ import com.umc.StudyFlexBE.dto.response.ComplaintResponseDto;
 import com.umc.StudyFlexBE.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import com.umc.StudyFlexBE.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -29,10 +32,8 @@ public class ComplaintController {
             @RequestBody ComplaintRequestDto request) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            Long memberId = userDetails.getMemberId();
-
-            ComplaintResponseDto complaintResponse = complaintService.postComplaint(memberId, studyId, request);
+            String email = authentication.getName();
+            ComplaintResponseDto complaintResponse = complaintService.postComplaint(email, studyId, request);
             return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, complaintResponse));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new BaseResponse<>(BaseResponseStatus.BAD_REQUEST));

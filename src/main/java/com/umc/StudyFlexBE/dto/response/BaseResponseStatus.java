@@ -32,6 +32,9 @@ public enum BaseResponseStatus {
 
     SEND_EMAIL_FAILED(false,3005 ,"인증코드 요청 실패" ),
     WEB_MAIL_CODE_FAILED(false, 3006, "인증코드 불일치"),
+    MAIL_SEND_FAILED(false, 3007,"이메일 전송 실패" ),
+    CHANGE_EMAIL_FAILED(false,3008 ,"이메일 변경 실패" ),
+    CHANGE_PASSWORD_FAILED(false,3009 ,"비밀번호 변경 실패" ),
 
     /**
      * 4XXX : Post
@@ -41,6 +44,8 @@ public enum BaseResponseStatus {
     NO_SUCH_CATEGORY(false,4002, "해당 카테고리를 찾을 수 없습니다"),
     STUDY_NOT_FOUND(false, 4003, "스터디를 찾을 수 없습니다."),
     LEADER_NOT_FOUND(false, 4004, "리더를 찾을 수 없습니다."),
+    NO_AUTHORITY(false,4005,"권한이 없습니다."),
+    NO_SUCH_STUDY_NOTICE(false,4006,"해당 스터디 공지사항을 찾을 수 없습니다."),
 
 
     /**
@@ -54,7 +59,12 @@ public enum BaseResponseStatus {
 
     INTERNAL_SERVER_ERROR(false, 500, "서버 내부 오류가 발생했습니다."),
 
-
+    /**
+     * 7XXX : Study
+     */
+    FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다."),
+    NO_STUDY_PARTICIPANT(false,7002, "스터디 참여 맴버가 아닙니다."),
+    NO_SUCH_WEEK(false,7003, "해당 주차 학습을 찾을 수 없습니다.")
     ;
 
     private final boolean isSuccess;

@@ -45,6 +45,11 @@ dependencies {
 	// school web mail
 	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
+	// password mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//mysql
+	implementation 'mysql:mysql-connector-java:8.0.26'
 
 
 	compileOnly 'org.projectlombok:lombok'
@@ -63,4 +68,7 @@ tasks.named('test') {
 
 
 
+}
+jar {
+	enabled = false
 }
