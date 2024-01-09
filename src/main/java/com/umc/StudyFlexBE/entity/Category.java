@@ -20,15 +20,4 @@ public class Category {
 
     @Column(name = "category_name", length = 100)
     private String name;
-
-    @OneToOne(mappedBy = "category")
-    private Study study;
-
-
-
-
-
-
-
-
 }

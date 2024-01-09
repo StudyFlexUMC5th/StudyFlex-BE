@@ -32,11 +32,6 @@ public class Study {
     @Column(name = "study_name", length = 100)
     private String name;
 
-
-    @OneToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-    private Category category;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "study_status", columnDefinition = "ENUM('RECRUITING', 'COMPLETED')")
     private StudyStatus status;
