@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-
+@CrossOrigin
 @RestController
 @RequestMapping("/app/naver")
 public class NaverController {
@@ -62,6 +62,8 @@ public class NaverController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MsgEntity("인증 과정에서 오류가 발생했습니다.", null));
         }
     }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {

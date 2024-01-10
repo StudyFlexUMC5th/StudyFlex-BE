@@ -25,6 +25,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncode() {
+
         return new BCryptPasswordEncoder();
     }
 
@@ -38,6 +39,7 @@ public class SecurityConfig {
 
 
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                        .requestMatchers("/app/naver/callback", "/app/naver/login").permitAll()
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
