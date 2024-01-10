@@ -40,8 +40,11 @@ public class Study {
     @Column(name = "thumbnail_url", length = 2083)
     private String thumbnailUrl;
 
-    @Column(name = "study_created_at", updatable = false)
+    @OneToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Category category;
 
+    @Column(name = "study_created_at", updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -82,8 +85,6 @@ public class Study {
     @Builder.Default
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Progress> progressList = new ArrayList<>();
-
-
 
     public void setRankScore(Double rankScore) {
         this.rankScore = rankScore;
