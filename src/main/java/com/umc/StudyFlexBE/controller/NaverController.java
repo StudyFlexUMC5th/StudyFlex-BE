@@ -72,7 +72,7 @@ public class NaverController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/loginTemp")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
         try {
             String code = payload.get("code");
