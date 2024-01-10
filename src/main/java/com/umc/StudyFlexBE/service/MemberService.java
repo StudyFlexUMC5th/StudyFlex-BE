@@ -59,26 +59,34 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpDto signUpDto) {
-        Member member = new Member();
-        member.setMember_type(general);
-        member.setEmail(signUpDto.getEmail());
-        member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-        member.setName(signUpDto.getName());
-        member.setSchool(signUpDto.getSchool());
-        member.setRole(ROLE_USER);
-        memberRepository.save(member);
+        if (checkEmail(signUpDto.getEmail()) == true) {
+            Member member = new Member();
+            member.setMember_type(general);
+            member.setEmail(signUpDto.getEmail());
+            member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+            member.setName(signUpDto.getName());
+            member.setSchool(signUpDto.getSchool());
+            member.setRole(ROLE_USER);
+            memberRepository.save(member);
+        }else{
+            throw new BaseException(BaseResponseStatus.DUPLICATE_EMAIL);
+        }
     }
 
     @Transactional
     public void signUpOAUth(SignUpOAuthDto signUpOAuthDto) {
-        Member member = new Member();
-        member.setMember_type(general);
-        member.setRole(ROLE_USER);
-        member.setEmail(signUpOAuthDto.getEmail());
-        member.setName(signUpOAuthDto.getName());
-        member.setPassword(passwordEncoder.encode("12345"));
-        member.setSchool(signUpOAuthDto.getSchool());
-        memberRepository.save(member);
+        if(checkEmail(signUpOAuthDto.getEmail())==true) {
+            Member member = new Member();
+            member.setMember_type(general);
+            member.setRole(ROLE_USER);
+            member.setEmail(signUpOAuthDto.getEmail());
+            member.setName(signUpOAuthDto.getName());
+            member.setPassword(passwordEncoder.encode("12345"));
+            member.setSchool(signUpOAuthDto.getSchool());
+            memberRepository.save(member);
+        } else{
+            throw new BaseException(BaseResponseStatus.DUPLICATE_EMAIL);
+        }
     }
 
 
