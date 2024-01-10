@@ -28,7 +28,7 @@ public class StudyController {
     }
 
     @PostMapping
-    public BaseResponse<?> createStudy(@RequestBody StudyReq study){
+    public BaseResponse<?> createStudy(@ModelAttribute StudyReq study){
         studyService.createStudy(study, getEmail());
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
