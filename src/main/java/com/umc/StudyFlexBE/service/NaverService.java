@@ -134,6 +134,8 @@ public class NaverService {
         newMember.setRole(Role.ROLE_USER);
         newMember.setNewUser(true); // 새로운 사용자 표시하기
 
+        memberRepository.save(newMember);
+
         return newMember;
     }
 }
