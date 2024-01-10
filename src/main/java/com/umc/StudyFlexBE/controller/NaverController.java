@@ -43,8 +43,12 @@ public class NaverController {
     @GetMapping("/callback")
     public ResponseEntity<?> callback(HttpServletRequest request) {
         try {
+            // 네이버 사용자 정보 가져옴
             NaverDto naverUser = naverService.getNaverInfo(request.getParameter("code"));
+            // 사용자 등록 혹은 인증
             Member member = naverService.registerOrAuthenticate(naverUser);
+            // 새 사용자 여부 확인
+            boolean isNewUser = member.isNewUser();
 
             // Member의 정보로 Authentication 객체 생성
             List<GrantedAuthority> authorities = member.getRoles().stream()
@@ -56,14 +60,19 @@ public class NaverController {
             // 생성된 Authentication 객체를 사용하여 토큰 생성
             String token = jwtTokenProvider.createToken(authentication);
 
-            MsgEntity response = new MsgEntity("인증 성공", token);
+            // 응답 맵 생성 및 값 추가
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("userInfo", naverUser);
+            response.put("isNewUser", isNewUser);
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MsgEntity("인증 과정에서 오류가 발생했습니다.", null));
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/loginTemp")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
         try {
             String code = payload.get("code");

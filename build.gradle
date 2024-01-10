@@ -54,13 +54,15 @@ dependencies {
 	//s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	//Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-
 }
 
 tasks.named('bootBuildImage') {

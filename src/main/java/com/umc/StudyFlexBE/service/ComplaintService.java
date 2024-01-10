@@ -4,15 +4,14 @@ import com.umc.StudyFlexBE.dto.request.ComplaintRequestDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.ComplaintResponseDto;
-import com.umc.StudyFlexBE.entity.Complaint;
-import com.umc.StudyFlexBE.entity.ComplaintCategory;
-import com.umc.StudyFlexBE.entity.Member;
-import com.umc.StudyFlexBE.entity.Study;
+import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.ComplaintRepository;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import com.umc.StudyFlexBE.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.umc.StudyFlexBE.entity.Role.ROLE_SUSPENDED;
 
 @Service
 public class ComplaintService {
@@ -48,8 +47,14 @@ public class ComplaintService {
         complaint.setComplainted_member(complaintedMember);
         complaint.setComplaint_category(ComplaintCategory.valueOf(request.getComplaintCategory()));
         complaint.setContent(request.getContent());
+        int currentComplainedValue = complaintedMember.getIsComplained();
+        if (currentComplainedValue == 2) {
+            complaintedMember.setRole(ROLE_SUSPENDED);
+        }
+        complaintedMember.setIsComplained(currentComplainedValue + 1);
 
         complaintRepository.save(complaint);
+        memberRepository.save(complaintedMember);
 
         return new ComplaintResponseDto(complaint.getComplaint_category().name(), complaint.getContent());
     }
