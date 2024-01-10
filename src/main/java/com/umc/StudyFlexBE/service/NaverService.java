@@ -122,17 +122,17 @@ public class NaverService {
         Member existingMember = memberRepository.findByEmail(naverUser.getEmail());
 
         if (existingMember != null) {
+            existingMember.setNewUser(false); // 기존 사용자 표시하기
             return existingMember;
         }
 
+        // 새로운 사용자 생성
         Member newMember = new Member();
         newMember.setEmail(naverUser.getEmail());
         newMember.setName(naverUser.getName());
-
         newMember.setPassword(passwordEncoder.encode("defaultPassword"));
-
         newMember.setRole(Role.ROLE_USER);
-        memberRepository.save(newMember);
+        newMember.setNewUser(true); // 새로운 사용자 표시하기
 
         return newMember;
     }
