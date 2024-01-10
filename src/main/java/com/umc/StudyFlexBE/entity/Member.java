@@ -56,4 +56,8 @@ public class Member {
     public List<String> getRoles() {
         return Collections.singletonList(role.name());
 }
+
+    @Transient
+    private boolean isNewUser = false;
+
 }
