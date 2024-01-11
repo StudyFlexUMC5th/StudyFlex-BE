@@ -68,6 +68,7 @@ public class MemberService {
             member.setName(signUpDto.getName());
             member.setSchool(signUpDto.getSchool());
             member.setRole(ROLE_USER);
+            member.setIsComplained(0);
             memberRepository.save(member);
         }else{
             throw new BaseException(BaseResponseStatus.DUPLICATE_EMAIL);
