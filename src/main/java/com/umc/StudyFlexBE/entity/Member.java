@@ -46,7 +46,7 @@ public class Member {
     private String school;
 
     @Column(name = "is_complained")
-    private Integer isComplained;
+    private Integer isComplained = 0;
 
 
     @BatchSize(size = 100)

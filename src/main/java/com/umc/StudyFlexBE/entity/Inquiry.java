@@ -2,10 +2,10 @@ package com.umc.StudyFlexBE.entity;
 
 import java.sql.Timestamp;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @AllArgsConstructor
@@ -27,20 +27,25 @@ public class Inquiry {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "is_opened", nullable = false, columnDefinition = "boolean default true")
-    private Boolean is_opened;
+    @Column(name = "is_opened", nullable = false)
+    private Boolean is_opened = true;
 
-    @Column(name = "is_answered", nullable = false, columnDefinition = "boolean default false")
-    private Boolean is_answered;
+    @Column(name = "is_answered", nullable = false)
+    private Boolean is_answered = false;
 
-    @Column(name = "view", nullable = false, columnDefinition = "int default 0")
-    private Integer view;
+    @Column(name = "view", nullable = false)
+    private Integer view = 0;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private Timestamp created_at;
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate
     private Timestamp updated_at;
+
+    @OneToOne(mappedBy = "inquiry", cascade = CascadeType.ALL)
+    private InquiryAnswer inquiryAnswer;
 
     public boolean getIs_answered() {
         return is_answered;
