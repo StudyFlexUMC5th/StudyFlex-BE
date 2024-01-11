@@ -117,7 +117,7 @@ public class StudyService {
         int targetWeek;
         try {
             maxMembers = Integer.valueOf(studyReq.getMax_members());
-            targetWeek = Integer.valueOf(studyReq.getMax_members());
+            targetWeek = Integer.valueOf(studyReq.getTarget_week());
         }catch (NumberFormatException e){
             throw new BaseException(BaseResponseStatus.INVALID_NUMBER);
         }
