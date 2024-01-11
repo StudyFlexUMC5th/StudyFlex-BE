@@ -14,7 +14,8 @@ public enum BaseResponseStatus {
      * 2XXX : Common
      */
     BAD_REQUEST(false, 2000, "잘못된 매개변수입니다."),
-
+    INTERNAL_SERVER_ERROR(false, 2001, "서버 내부 오류가 발생했습니다."),
+    INVALID_NUMBER(false, 2002, "잘못된 숫자 형식입니다."),
 
     /**
      * 3XXX : Member
@@ -57,14 +58,18 @@ public enum BaseResponseStatus {
      */
     NO_SUCH_STUDY(false, 6000, "해당 스터디를 찾을 수 없습니다."),
 
-    INTERNAL_SERVER_ERROR(false, 500, "서버 내부 오류가 발생했습니다."),
-
     /**
      * 7XXX : Study
      */
     FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다."),
     NO_STUDY_PARTICIPANT(false,7002, "스터디 참여 맴버가 아닙니다."),
-    NO_SUCH_WEEK(false,7003, "해당 주차 학습을 찾을 수 없습니다.")
+    NO_SUCH_WEEK(false,7003, "해당 주차 학습을 찾을 수 없습니다."),
+
+    /**
+     * S3 : S3
+     */
+    UPLOAD_FAILED(false, 8001, "이미지 업로드에 실패했습니다."),
+    FILE_DELETE_FAILED(false, 8002, "이미지 삭제에 실패했습니다.")
     ;
 
     private final boolean isSuccess;

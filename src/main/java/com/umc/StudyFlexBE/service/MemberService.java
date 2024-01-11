@@ -13,6 +13,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import com.umc.StudyFlexBE.dto.response.LoginRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
@@ -90,7 +91,7 @@ public class MemberService {
     }
 
 
-    public String login(LoginDto loginDto) {
+    public LoginRes login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.getEmail());
         if (member == null) {
             throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
@@ -109,7 +110,11 @@ public class MemberService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.createToken(authentication);
             String token = "Bearer " + jwt;
-            return token;
+
+            return LoginRes.builder()
+                    .token(token)
+                    .email(loginDto.getEmail())
+                    .build();
 
         } catch (Exception e) {
             System.out.println("Authentication failed: " + e.getMessage());

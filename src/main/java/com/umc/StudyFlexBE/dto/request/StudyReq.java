@@ -1,6 +1,5 @@
 package com.umc.StudyFlexBE.dto.request;
 
-import jakarta.persistence.Column;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,14 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyReq {
-    @Column(name = "thumbnail_url")
-    private MultipartFile thumbnailUrl;
-    @Column(name = "study_name")
-    private String studyName;
-    @Column(name = "max_members")
-    private int maxMembers;
-    @Column(name = "category_name")
-    private String categoryName;
-    @Column(name = "target_week")
-    private int targetWeek;
+
+    private MultipartFile thumbnail_url;
+    private String study_name;
+    private String max_members;
+    private String category_name;
+    private String target_week;
 }
