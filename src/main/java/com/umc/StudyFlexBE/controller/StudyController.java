@@ -29,8 +29,8 @@ public class StudyController {
 
     @PostMapping
     public BaseResponse<?> createStudy(@ModelAttribute StudyReq study){
-        studyService.createStudy(study, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+        Long id = studyService.createStudy(study, getEmail());
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, id);
     }
 
     @GetMapping("/checkName")
