@@ -133,6 +133,7 @@ public class StudyService {
                 .maxMembers(maxMembers)
                 .targetWeek(maxMembers)
                 .currentMembers(1)
+                .completedWeek(0)
                 .completedAt(LocalDateTime.now().plusWeeks(targetWeek))
                 .build();
 
