@@ -131,7 +131,7 @@ public class StudyService {
                 .name(studyReq.getStudy_name())
                 .thumbnailUrl(url)
                 .maxMembers(maxMembers)
-                .targetWeek(maxMembers)
+                .targetWeek(targetWeek)
                 .currentMembers(1)
                 .completedWeek(0)
                 .completedAt(LocalDateTime.now().plusWeeks(targetWeek))
