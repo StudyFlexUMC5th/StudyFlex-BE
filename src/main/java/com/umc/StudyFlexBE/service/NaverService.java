@@ -6,12 +6,16 @@ import com.umc.StudyFlexBE.dto.response.InvalidAuthorizationCodeException;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.Role;
 import com.umc.StudyFlexBE.repository.MemberRepository;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,8 +27,9 @@ import org.springframework.web.client.RestTemplate;
 
 
 
-@NoArgsConstructor(force = true)
+
 @Service
+@RequiredArgsConstructor
 public class NaverService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

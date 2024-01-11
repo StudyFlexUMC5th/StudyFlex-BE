@@ -36,6 +36,7 @@ public enum BaseResponseStatus {
     MAIL_SEND_FAILED(false, 3007,"이메일 전송 실패" ),
     CHANGE_EMAIL_FAILED(false,3008 ,"이메일 변경 실패" ),
     CHANGE_PASSWORD_FAILED(false,3009 ,"비밀번호 변경 실패" ),
+    NAVER_LOGIN_FAILED(false, 3010, "네이버 로그인 실패"),
 
     /**
      * 4XXX : Post
@@ -69,7 +70,7 @@ public enum BaseResponseStatus {
      * S3 : S3
      */
     UPLOAD_FAILED(false, 8001, "이미지 업로드에 실패했습니다."),
-    FILE_DELETE_FAILED(false, 8002, "이미지 삭제에 실패했습니다.")
+    FILE_DELETE_FAILED(false, 8002, "이미지 삭제에 실패했습니다."),
     ;
 
     private final boolean isSuccess;
