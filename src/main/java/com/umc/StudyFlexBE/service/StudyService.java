@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +27,8 @@ public class StudyService {
     private final CategoryRepository categoryRepository;
     private final ProgressRepository progressRepository;
     private final CompletedRepository completedRepository;
+    private final MemberRepository memberRepository;
+    private final AwsS3Service awsS3Service;
 
 
     @Autowired
@@ -39,14 +38,17 @@ public class StudyService {
             StudyNoticeRepository studyNoticeRepository,
             CategoryRepository categoryRepository,
             ProgressRepository progressRepository,
-            CompletedRepository completedRepository
-    ) {
+            CompletedRepository completedRepository,
+            MemberRepository memberRepository,
+            AwsS3Service awsS3Service) {
         this.studyRepository = studyRepository;
         this.studyParticipationRepository = studyParticipationRepository;
         this.studyNoticeRepository = studyNoticeRepository;
         this.categoryRepository = categoryRepository;
         this.progressRepository = progressRepository;
         this.completedRepository = completedRepository;
+        this.memberRepository = memberRepository;
+        this.awsS3Service = awsS3Service;
     }
 
     public List<Study> getLatestStudies() {
@@ -62,7 +64,8 @@ public class StudyService {
         }
     }
 
-    public StudyAuthorityType checkAuthority(Long studyId, Member member){
+    public StudyAuthorityType checkAuthority(Long studyId, String email){
+        Member member = memberRepository.findByEmail(email);
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -80,7 +83,8 @@ public class StudyService {
     }
 
     @Transactional
-    public void participation(Long studyId, Member member){
+    public void participation(Long studyId, String email){
+        Member member = memberRepository.findByEmail(email);
 
         //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
@@ -102,23 +106,34 @@ public class StudyService {
     }
 
     @Transactional
-    public void createStudy(StudyReq studyReq, Member member){
+    public void createStudy(StudyReq studyReq, String email){
 
+        Member member = memberRepository.findByEmail(email);
         //스터디 생성 로직
-        Category category = categoryRepository.findByName(studyReq.getCategoryName())
+        Category category = categoryRepository.findByName(studyReq.getCategory_name())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_CATEGORY));
 
+        int maxMembers;
+        int targetWeek;
+        try {
+            maxMembers = Integer.valueOf(studyReq.getMax_members());
+            targetWeek = Integer.valueOf(studyReq.getMax_members());
+        }catch (NumberFormatException e){
+            throw new BaseException(BaseResponseStatus.INVALID_NUMBER);
+        }
+
+        String url = awsS3Service.upload(studyReq.getThumbnail_url(), member.getMember_id());
 
         Study study = Study.builder()
                 .leaderId(member.getMember_id())
                 .category(category)
                 .status(StudyStatus.RECRUITING)
-                .name(studyReq.getStudyName())
-                .thumbnailUrl(uploadImg(studyReq.getThumbnailUrl(), member.getMember_id()))
-                .maxMembers(studyReq.getMaxMembers())
-                .targetWeek(studyReq.getTargetWeek())
+                .name(studyReq.getStudy_name())
+                .thumbnailUrl(url)
+                .maxMembers(maxMembers)
+                .targetWeek(maxMembers)
                 .currentMembers(1)
-                .completedAt(LocalDateTime.now().plusWeeks(studyReq.getTargetWeek()))
+                .completedAt(LocalDateTime.now().plusWeeks(targetWeek))
                 .build();
 
         studyRepository.save(study);
@@ -127,7 +142,7 @@ public class StudyService {
         List<Progress> progressesList = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
-        for(int i = 0; i < studyReq.getTargetWeek(); i++){
+        for(int i = 0; i < targetWeek; i++){
             progressesList.add(
                     Progress.builder()
                             .startDate(today.plusWeeks(i))
@@ -140,22 +155,6 @@ public class StudyService {
         progressRepository.saveAll(progressesList);
     }
 
-    private String uploadImg(MultipartFile img, Long memberId) {
-        String url = "";
-
-        if (!img.isEmpty()) {
-            url = "../testFile/" + memberId;
-            try {
-                img.transferTo(new File(url));
-            } catch (IOException e) {
-                log.info("uploadImg Error : ", e);
-                throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return url;
-
-    }
 
     public List<Study> getRankedStudies() {
         List<Study> studies = studyRepository.findAll();
@@ -175,8 +174,8 @@ public class StudyService {
 
     }
 
-    public void postStudyNotice(Long studyId, Member member, StudyNoticeReq studyNoticeReq){
-        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+    public void postStudyNotice(Long studyId, String email, StudyNoticeReq studyNoticeReq){
+        if(!checkAuthority(studyId,email).equals(StudyAuthorityType.LEADER)){
             throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
         }
 
@@ -193,8 +192,8 @@ public class StudyService {
         studyNoticeRepository.save(studyNotice);
     }
 
-    public StudyNoticeRes getStudyNotice(Long studyId, Long noticeId, Member member){
-        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+    public StudyNoticeRes getStudyNotice(Long studyId, Long noticeId, String email){
+        if(checkAuthority(studyId,email).equals(StudyAuthorityType.NON_MEMBER)){
             throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
         }
 
@@ -209,16 +208,16 @@ public class StudyService {
                 .build();
     }
 
-    public void deleteStudyNotice(Long studyId, Long noticeId, Member member) {
-        if(!checkAuthority(studyId,member).equals(StudyAuthorityType.LEADER)){
+    public void deleteStudyNotice(Long studyId, Long noticeId, String email) {
+        if(!checkAuthority(studyId,email).equals(StudyAuthorityType.LEADER)){
             throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
         }
 
         studyNoticeRepository.deleteById(noticeId);
     }
 
-    public StudyNoticesInfoRes getStudyNotices(Long studyId, Member member) {
-        if(checkAuthority(studyId,member).equals(StudyAuthorityType.NON_MEMBER)){
+    public StudyNoticesInfoRes getStudyNotices(Long studyId, String email) {
+        if(checkAuthority(studyId,email).equals(StudyAuthorityType.NON_MEMBER)){
             throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
         }
 
@@ -242,7 +241,9 @@ public class StudyService {
     }
 
     @Transactional
-    public ProgressRes checkCompletedStudyWeek(long studyId, int week, Member member) {
+    public ProgressRes checkCompletedStudyWeek(long studyId, int week, String email) {
+        Member member = memberRepository.findByEmail(email);
+
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -275,11 +276,12 @@ public class StudyService {
                 .build();
     }
 
-    public List<ProgressRes> getStudyProgressList(long studyId, Member member){
+    public List<ProgressRes> getStudyProgressList(long studyId, String email){
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
+        Member member = memberRepository.findByEmail(email);
         StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
         );

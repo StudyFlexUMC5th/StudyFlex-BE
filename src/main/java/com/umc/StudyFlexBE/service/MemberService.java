@@ -1,10 +1,6 @@
 package com.umc.StudyFlexBE.service;
 
 
-import static com.umc.StudyFlexBE.entity.MemberType.general;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
@@ -13,6 +9,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpDto;
 import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import com.umc.StudyFlexBE.dto.response.LoginRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
@@ -37,6 +34,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.umc.StudyFlexBE.entity.MemberType.general;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,29 +60,38 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpDto signUpDto) {
-        Member member = new Member();
-        member.setMember_type(general);
-        member.setEmail(signUpDto.getEmail());
-        member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-        member.setName(signUpDto.getName());
-        member.setSchool(signUpDto.getSchool());
-        member.setRole(ROLE_USER);
-        memberRepository.save(member);
+        if (checkEmail(signUpDto.getEmail()) == true) {
+            Member member = new Member();
+            member.setMember_type(general);
+            member.setEmail(signUpDto.getEmail());
+            member.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+            member.setName(signUpDto.getName());
+            member.setSchool(signUpDto.getSchool());
+            member.setRole(ROLE_USER);
+            memberRepository.save(member);
+        }else{
+            throw new BaseException(BaseResponseStatus.DUPLICATE_EMAIL);
+        }
     }
 
     @Transactional
     public void signUpOAUth(SignUpOAuthDto signUpOAuthDto) {
-        Member member = new Member();
-        member.setMember_type(general);
-        member.setEmail(signUpOAuthDto.getEmail());
-        member.setName(signUpOAuthDto.getName());
-        member.setPassword(passwordEncoder.encode("12345"));
-        member.setSchool(signUpOAuthDto.getSchool());
-        memberRepository.save(member);
+        if(checkEmail(signUpOAuthDto.getEmail())==true) {
+            Member member = new Member();
+            member.setMember_type(general);
+            member.setRole(ROLE_USER);
+            member.setEmail(signUpOAuthDto.getEmail());
+            member.setName(signUpOAuthDto.getName());
+            member.setPassword(passwordEncoder.encode("12345"));
+            member.setSchool(signUpOAuthDto.getSchool());
+            memberRepository.save(member);
+        } else{
+            throw new BaseException(BaseResponseStatus.DUPLICATE_EMAIL);
+        }
     }
 
 
-    public String login(LoginDto loginDto) {
+    public LoginRes login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.getEmail());
         if (member == null) {
             throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
@@ -100,7 +110,11 @@ public class MemberService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.createToken(authentication);
             String token = "Bearer " + jwt;
-            return token;
+
+            return LoginRes.builder()
+                    .token(token)
+                    .email(loginDto.getEmail())
+                    .build();
 
         } catch (Exception e) {
             System.out.println("Authentication failed: " + e.getMessage());
@@ -117,7 +131,7 @@ public class MemberService {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
             params.add("client_id", "a6e75ba812b0214d4f01fdaec0af6ac1");
-            params.add("redirect_uri", "http://localhost:8080/app/member/kakao/callback");
+            params.add("redirect_uri", "http://43.202.229.53:8080/app/member/kakao/callback");
             params.add("code", code);
             HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
             ResponseEntity<String> response = restTemplate.exchange(

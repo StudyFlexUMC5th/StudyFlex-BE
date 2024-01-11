@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +22,5 @@ public class Category {
 
     @OneToOne(mappedBy = "category")
     private Study study;
-
-
-
-
-
-
-
 
 }

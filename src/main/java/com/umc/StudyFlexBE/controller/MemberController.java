@@ -5,6 +5,7 @@ import com.umc.StudyFlexBE.dto.request.*;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
+import com.umc.StudyFlexBE.dto.response.LoginRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.service.MemberService;
 import com.univcert.api.UnivCert;
@@ -57,8 +58,8 @@ public class MemberController {
     public BaseResponse<?> login(@RequestBody LoginDto loginDto) {
         try {
 
-            String token = memberService.login(loginDto);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
+            LoginRes loginRes = memberService.login(loginDto);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, loginRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -83,15 +84,15 @@ public class MemberController {
                 LoginDto loginDto = new LoginDto();
                 loginDto.setEmail(nickname);
                 loginDto.setPassword("12345");
-                String token = memberService.login(loginDto);
-                return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
+                LoginRes loginRes = memberService.login(loginDto);
+                return new BaseResponse<>(BaseResponseStatus.SUCCESS, loginRes);
             }
             // 있다면 로그인
             LoginDto loginDto = new LoginDto();
             loginDto.setEmail(nickname);
             loginDto.setPassword("12345");
-            String token = memberService.login(loginDto);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
+            LoginRes loginRes = memberService.login(loginDto);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, loginRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
          }

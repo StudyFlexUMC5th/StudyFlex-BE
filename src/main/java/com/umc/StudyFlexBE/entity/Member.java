@@ -45,6 +45,9 @@ public class Member {
     @Column(name = "school",length = 100)
     private String school;
 
+    @Column(name = "is_complained")
+    private Integer isComplained;
+
 
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -53,4 +56,8 @@ public class Member {
     public List<String> getRoles() {
         return Collections.singletonList(role.name());
 }
+
+    @Transient
+    private boolean isNewUser = false;
+
 }
