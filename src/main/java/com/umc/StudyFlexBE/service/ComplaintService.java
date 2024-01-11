@@ -46,12 +46,15 @@ public class ComplaintService {
         complaint.setComplaint_member(complaintMember);
         complaint.setComplainted_member(complaintedMember);
         complaint.setComplaint_category(ComplaintCategory.valueOf(request.getComplaintCategory()));
-        complaint.setContent(request.getContent());
+        if(complaintedMember.getIsComplained() == null){
+            complaintedMember.setIsComplained(0);
+        }
         int currentComplainedValue = complaintedMember.getIsComplained();
         if (currentComplainedValue == 2) {
             complaintedMember.setRole(ROLE_SUSPENDED);
         }
         complaintedMember.setIsComplained(currentComplainedValue + 1);
+        complaint.setContent(request.getContent());
 
         complaintRepository.save(complaint);
         memberRepository.save(complaintedMember);
