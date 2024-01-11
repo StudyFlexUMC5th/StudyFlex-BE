@@ -39,7 +39,6 @@ public class JwtFilter extends GenericFilterBean {
         }
 
 
-
         String jwt = resolveToken(httpServletRequest);
 
         if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {

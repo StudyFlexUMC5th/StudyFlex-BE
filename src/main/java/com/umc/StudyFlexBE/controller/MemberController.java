@@ -1,12 +1,7 @@
 package com.umc.StudyFlexBE.controller;
 
 
-import com.umc.StudyFlexBE.dto.request.CheckAuthCodeDto;
-import com.umc.StudyFlexBE.dto.request.LoginDto;
-import com.umc.StudyFlexBE.dto.request.SearchPasswordDto;
-import com.umc.StudyFlexBE.dto.request.SendAuthCodeDto;
-import com.umc.StudyFlexBE.dto.request.SignUpDto;
-import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
+import com.umc.StudyFlexBE.dto.request.*;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
@@ -14,20 +9,15 @@ import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.service.MemberService;
 import com.univcert.api.UnivCert;
 import jakarta.validation.Valid;
-import java.io.IOException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("app/member")
@@ -104,7 +94,7 @@ public class MemberController {
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, token);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
-        }
+         }
     }
 
 
