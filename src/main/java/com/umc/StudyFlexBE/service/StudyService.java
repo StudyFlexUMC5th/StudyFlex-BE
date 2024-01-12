@@ -13,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -150,6 +148,7 @@ public class StudyService {
                             .startDate(today.plusWeeks(i))
                             .week(i+1)
                             .study(study)
+                            .completedNumber(0)
                             .build()
             );
         }
@@ -285,30 +284,23 @@ public class StudyService {
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
-        Member member = memberRepository.findByEmail(email);
-        Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
+        return progressRepository.findAllByStudy(study)
+                .stream()
+                .map(progress -> {
+                    // 각 progress에 대해 completed 엔티티를 조회하여 완료된 멤버의 수를 계산
+                    long completedCount = completedRepository.countByProgress(progress);
 
-        if (!optionalStudyParticipation.isPresent()) {
-            return Collections.emptyList();
-        }
-            StudyParticipation studyParticipation = optionalStudyParticipation.get();
+                    // 전체 멤버 수 대비 완료된 멤버의 비율을 계산
+                    double rate = (double) completedCount / study.getCurrentMembers();
 
-
-            return progressRepository.findAllByStudy(study)
-                    .stream()
-                    .map(progress -> {
-                        boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
-                        double rate = (progress.getCompletedNumber() * 1.0) / study.getCurrentMembers();
-                        return ProgressRes.builder()
-                                .week(progress.getWeek())
-                                .completed(completed)
-                                .start_date(progress.getStartDate())
-                                .participant_rate(rate)
-                                .build();
-                    }).collect(Collectors.toList());
-
-
-
+                    // 각 주차에 대한 정보를 ProgressRes 객체로 생성
+                    return ProgressRes.builder()
+                            .week(progress.getWeek())
+                            .start_date(progress.getStartDate())
+                            .participant_rate(rate)
+                            .completed(completedCount > 0) // 한 명 이상 완료했다면 해당 주차는 완료된 것으로 간주
+                            .build();
+                }).collect(Collectors.toList());
     }
         public StudyDetailRes getStudyDetail(long studyId){
             Study study = studyRepository.findById(studyId).orElseThrow(

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CompletedRepository extends JpaRepository<Completed, Long> {
     boolean existsByProgressAndStudyParticipation(Progress progress, StudyParticipation studyParticipation);
+
+    long countByProgress(Progress progress);
 }
