@@ -1,6 +1,10 @@
 package com.umc.StudyFlexBE.service;
 
 
+import static com.umc.StudyFlexBE.entity.MemberType.general;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
@@ -33,10 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import static com.umc.StudyFlexBE.entity.MemberType.general;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor
