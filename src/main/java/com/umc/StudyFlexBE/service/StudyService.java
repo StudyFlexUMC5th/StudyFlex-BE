@@ -288,10 +288,10 @@ public class StudyService {
         Member member = memberRepository.findByEmail(email);
         Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
 
-        if (!optionalStudyParticipation.isPresent()) {
+        if (optionalStudyParticipation.isEmpty()) {
             return Collections.emptyList();
         }
-            StudyParticipation studyParticipation = optionalStudyParticipation.get();
+        StudyParticipation studyParticipation = optionalStudyParticipation.get();
 
 
             return progressRepository.findAllByStudy(study)
