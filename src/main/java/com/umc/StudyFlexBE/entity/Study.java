@@ -71,7 +71,7 @@ public class Study {
     private Double rankScore;
 
     @Column(name = "completed_week")
-    private Integer completedWeek = 0;
+     private Integer completedWeek = 0;
 
     @Column(name = "targer_week")
     private Integer targetWeek;

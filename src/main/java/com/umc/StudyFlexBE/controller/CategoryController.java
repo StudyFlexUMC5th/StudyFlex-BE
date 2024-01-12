@@ -4,7 +4,6 @@ import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.Category;
 import com.umc.StudyFlexBE.entity.Study;
-import com.umc.StudyFlexBE.repository.CategoryRepository;
 import com.umc.StudyFlexBE.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/app/categories")
+    @GetMapping()
     public List<Category> getAllCategories() {
         return categoryService.getAllCategories();
     }
