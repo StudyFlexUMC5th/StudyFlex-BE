@@ -86,6 +86,7 @@ public class MemberController {
                 loginDto.setEmail(nickname);
                 loginDto.setPassword("12345");
                 LoginRes loginRes = memberService.login(loginDto);
+                loginRes.setNewUser(true);
                 return new BaseResponse<>(BaseResponseStatus.SUCCESS, loginRes);
             }
             // 있다면 로그인
@@ -93,6 +94,7 @@ public class MemberController {
             loginDto.setEmail(nickname);
             loginDto.setPassword("12345");
             LoginRes loginRes = memberService.login(loginDto);
+            loginRes.setNewUser(false);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, loginRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

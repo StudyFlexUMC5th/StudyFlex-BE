@@ -53,7 +53,7 @@ public class NaverService {
     public String getNaverLogin() {
         return NAVER_AUTH_URI + "/oauth2.0/authorize"
                 + "?client_id=" + NAVER_CLIENT_ID
-                + "&redirect_uri=" + "http://43.202.229.53:8080/app/naver/callback"
+                + "&redirect_uri=" + NAVER_REDIRECT_URL
                 + "&response_type=code";
     }
 
