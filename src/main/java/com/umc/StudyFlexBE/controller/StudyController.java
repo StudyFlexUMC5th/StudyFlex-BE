@@ -33,7 +33,7 @@ public class StudyController {
             StudyRes studyRes = studyService.createStudy(study, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyRes);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -43,7 +43,7 @@ public class StudyController {
             studyService.checkDuplicateStudyName(study_name);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, "사용가능한 스터디 이름입니다.");
         }catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -53,7 +53,7 @@ public class StudyController {
             StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyAuthorityType);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -63,7 +63,7 @@ public class StudyController {
             studyService.participation(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 참여에 성공했습니다.");
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
     @GetMapping("/latest")
@@ -91,7 +91,7 @@ public class StudyController {
             studyService.postStudyNotice(study_id, getEmail(), studyNoticeReq);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, "공지사항이 등록되었습니다.");
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -101,7 +101,7 @@ public class StudyController {
             StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -111,7 +111,7 @@ public class StudyController {
             studyService.deleteStudyNotice(study_id, notice_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -121,7 +121,7 @@ public class StudyController {
             StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotices);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -131,7 +131,7 @@ public class StudyController {
             ProgressRes progressReq = studyService.checkCompletedStudyWeek(study_id, week, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, progressReq);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -141,7 +141,7 @@ public class StudyController {
             List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyProgressList);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
@@ -151,7 +151,7 @@ public class StudyController {
             StudyDetailRes studyDetail = studyService.getStudyDetail(study_id);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyDetail);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus(), e.getMessage());
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
