@@ -65,8 +65,7 @@ public class NaverController {
                     member.getEmail(), null, authorities);
 
             // 생성된 Authentication 객체를 사용하여 토큰 생성
-            String token = jwtTokenProvider.createToken(authentication);
-
+            String token = "Bearer " + jwtTokenProvider.createToken(authentication);
             LoginRes naverLoginRes = new LoginRes(token, naverUser.getEmail(), isNewUser);
 
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, naverLoginRes);
