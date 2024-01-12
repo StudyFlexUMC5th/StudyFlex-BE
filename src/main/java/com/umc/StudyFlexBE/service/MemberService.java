@@ -10,7 +10,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.LoginRes;
-import com.umc.StudyFlexBE.dto.response.ParticipationStudyRes;
+import com.umc.StudyFlexBE.dto.response.GetParticipationStudyRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
@@ -247,7 +247,7 @@ public class MemberService {
 
     }
 
-    public ParticipationStudyRes getParticipationStudy(String email) {
+    public GetParticipationStudyRes getParticipationStudy(String email) {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
             throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
@@ -256,13 +256,13 @@ public class MemberService {
         StudyParticipation studyParticipation = studyParticipationRepository.findByMember(member).orElse(null);
 
         if(studyParticipation == null){
-            return ParticipationStudyRes.builder()
+            return GetParticipationStudyRes.builder()
                     .isParticipation(true)
                     .studyId(studyParticipation.getStudy().getId())
                     .build();
         }
 
-        return ParticipationStudyRes.builder()
+        return GetParticipationStudyRes.builder()
                 .isParticipation(false)
                 .studyId(-1L)
                 .build();
