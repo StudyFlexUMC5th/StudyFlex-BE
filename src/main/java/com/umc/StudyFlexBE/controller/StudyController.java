@@ -30,8 +30,8 @@ public class StudyController {
     @PostMapping
     public BaseResponse<?> createStudy(@ModelAttribute StudyReq study){
         try {
-            Long id = studyService.createStudy(study, getEmail());
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS, id);
+            StudyRes studyRes = studyService.createStudy(study, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyRes);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus(), e.getMessage());
         }

@@ -106,7 +106,7 @@ public class StudyService {
     }
 
     @Transactional
-    public Long createStudy(StudyReq studyReq, String email){
+    public StudyRes createStudy(StudyReq studyReq, String email){
 
         Member member = memberRepository.findByEmail(email);
         //스터디 생성 로직
@@ -156,7 +156,10 @@ public class StudyService {
 
         progressRepository.saveAll(progressesList);
 
-        return save.getId();
+        return StudyRes.builder()
+                .studyName(save.getName())
+                .studyId(save.getId())
+                .build();
     }
 
 
