@@ -53,6 +53,7 @@ public enum BaseResponseStatus {
     /**
      * 5xxx: Mypage
      */
+    GET_MY_STUDY_FAILED( false,5001,"내 스터디를 얻어오는데 실패했습니다."),
 
     /**
      * 6XXX : Search

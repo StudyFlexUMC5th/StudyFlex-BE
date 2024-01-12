@@ -83,9 +83,12 @@ public class StudyService {
     }
 
     @Transactional
-    public void participation(Long studyId, String email){
+    public boolean participation(Long studyId, String email){
         Member member = memberRepository.findByEmail(email);
 
+        if(studyParticipationRepository.findByMember(member).isPresent()){
+            return false;
+        }
         //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
@@ -103,10 +106,12 @@ public class StudyService {
 
         //스터디 현제 인원 변경
         study.participationStudy();
+
+        return true;
     }
 
     @Transactional
-    public Long createStudy(StudyReq studyReq, String email){
+    public StudyRes createStudy(StudyReq studyReq, String email){
 
         Member member = memberRepository.findByEmail(email);
         //스터디 생성 로직
@@ -156,7 +161,10 @@ public class StudyService {
 
         progressRepository.saveAll(progressesList);
 
-        return save.getId();
+        return StudyRes.builder()
+                .studyName(save.getName())
+                .studyId(save.getId())
+                .build();
     }
 
 

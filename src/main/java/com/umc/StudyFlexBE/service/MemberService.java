@@ -14,10 +14,13 @@ import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.LoginRes;
+import com.umc.StudyFlexBE.dto.response.GetParticipationStudyRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
+import com.umc.StudyFlexBE.entity.StudyParticipation;
 import com.umc.StudyFlexBE.repository.MemberRepository;
+import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final StudyParticipationRepository studyParticipationRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -240,6 +244,28 @@ public class MemberService {
 
         member.setEmail(newEmail);
         memberRepository.save(member);
+
+    }
+
+    public GetParticipationStudyRes getParticipationStudy(String email) {
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
+        }
+
+        StudyParticipation studyParticipation = studyParticipationRepository.findByMember(member).orElse(null);
+
+        if(studyParticipation == null){
+            return GetParticipationStudyRes.builder()
+                    .isParticipation(true)
+                    .studyId(studyParticipation.getStudy().getId())
+                    .build();
+        }
+
+        return GetParticipationStudyRes.builder()
+                .isParticipation(false)
+                .studyId(-1L)
+                .build();
 
     }
 }
