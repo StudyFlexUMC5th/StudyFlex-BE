@@ -2,12 +2,10 @@ package com.umc.StudyFlexBE.controller;
 
 
 import com.umc.StudyFlexBE.dto.request.*;
-import com.umc.StudyFlexBE.dto.response.BaseException;
-import com.umc.StudyFlexBE.dto.response.BaseResponse;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.LoginRes;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.service.MemberService;
+import com.umc.StudyFlexBE.service.StudyService;
 import com.univcert.api.UnivCert;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -164,6 +162,24 @@ public class MemberController {
         } catch (BaseException e) {
             return new BaseResponse<>(BaseResponseStatus.CHANGE_EMAIL_FAILED);
         }
+
+    }
+
+    @GetMapping("/myStudy")
+    public BaseResponse<?> getParticipationStudy(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            ParticipationStudyRes res = memberService.getParticipationStudy(email);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS,res);
+        } catch (BaseException e) {
+            if(e.getStatus().equals(BaseResponseStatus.NO_SUCH_EMAIL)) {
+                return new BaseResponse<>(e.getStatus());
+            }else{
+                return new BaseResponse<>(BaseResponseStatus.GET_MY_STUDY_FAILED);
+            }
+        }
+
 
     }
 
