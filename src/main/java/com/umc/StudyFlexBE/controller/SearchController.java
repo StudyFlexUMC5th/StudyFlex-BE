@@ -4,7 +4,6 @@ import com.umc.StudyFlexBE.dto.response.BaseResponse;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.SearchService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/app/search")
 public class SearchController {
     private final SearchService searchService;
+    private BaseResponse<?> response;
 
     @Autowired
     public SearchController(SearchService searchService) {
@@ -32,17 +32,18 @@ public class SearchController {
         try {
             Study searchResult = searchService.searchStudies(query);
             if (searchResult == null) {
-                return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.NO_SUCH_STUDY));
+                BaseResponse<?> response = new BaseResponse<>(BaseResponseStatus.NO_SUCH_STUDY);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             } else {
                 Map<String, Object> studyData = new HashMap<>();
                 studyData.put("studyId", searchResult.getId());
                 studyData.put("studyName", searchResult.getName());
-                return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS, studyData));
+                BaseResponse<Map<String, Object>> response = new BaseResponse<>(BaseResponseStatus.SUCCESS, studyData);
+                return ResponseEntity.ok(response);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            BaseResponse<?> response = new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
-    }
+}

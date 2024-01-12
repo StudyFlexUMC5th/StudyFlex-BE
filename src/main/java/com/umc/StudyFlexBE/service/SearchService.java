@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 public class SearchService {
     private final StudyRepository studyRepository;
 
+
     @Autowired
     public SearchService(StudyRepository studyRepository) {
 
         this.studyRepository = studyRepository;
+
     }
 
     public Study searchStudies(String query) {

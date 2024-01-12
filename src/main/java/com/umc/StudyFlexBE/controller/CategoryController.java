@@ -26,6 +26,7 @@ public class CategoryController {
     public CategoryController(CategoryService categoryService) {
 
         this.categoryService = categoryService;
+
     }
 
     @GetMapping()
@@ -45,6 +46,8 @@ public class CategoryController {
                 Map<String, Object> studyData = new HashMap<>();
                 studyData.put("studyId", study.getId());
                 studyData.put("studyName", study.getName());
+                String studyPageUrl = "https://example.com/app/studies/" + study.getId();
+                studyData.put("studyPageUrl", studyPageUrl);
                 BaseResponse<Map<String, Object>> response = new BaseResponse<>(BaseResponseStatus.SUCCESS, studyData);
                 return ResponseEntity.ok(response);
             }

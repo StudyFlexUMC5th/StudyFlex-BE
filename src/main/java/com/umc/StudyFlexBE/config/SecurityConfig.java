@@ -18,7 +18,8 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+
+public class SecurityConfig  {
 
 
     private final CorsFilter corsFilter;
@@ -39,9 +40,11 @@ public class SecurityConfig {
 
 
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/app/naver/callback", "/app/naver/login").permitAll()
+                        .requestMatchers("/app/naver/login","/app/naver/callback" ,"/app/studies/open","/app/studies/latest","/app/studies/ranking").permitAll()
                         .requestMatchers("/**").permitAll()
+
                         .anyRequest().authenticated()
+
                 )
 
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정
@@ -56,6 +59,8 @@ public class SecurityConfig {
                 );
         return http.build();
     }
+
+
 
 
 }
