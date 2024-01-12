@@ -150,6 +150,7 @@ public class StudyService {
                             .startDate(today.plusWeeks(i))
                             .week(i+1)
                             .study(study)
+                            .completedNumber(0)
                             .build()
             );
         }
