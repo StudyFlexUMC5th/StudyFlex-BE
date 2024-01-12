@@ -5,7 +5,6 @@ import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.*;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -131,8 +131,9 @@ public class StudyService {
                 .name(studyReq.getStudy_name())
                 .thumbnailUrl(url)
                 .maxMembers(maxMembers)
-                .targetWeek(maxMembers)
+                .targetWeek(targetWeek)
                 .currentMembers(1)
+                .completedWeek(0)
                 .completedAt(LocalDateTime.now().plusWeeks(targetWeek))
                 .build();
 
@@ -148,6 +149,7 @@ public class StudyService {
                             .startDate(today.plusWeeks(i))
                             .week(i+1)
                             .study(study)
+                            .completedNumber(0)
                             .build()
             );
         }
@@ -272,50 +274,63 @@ public class StudyService {
         double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
 
         return ProgressRes.builder()
-                .completed(true)
+                .completed(Optional.of(true))
                 .participant_rate(rate)
                 .start_date(progress.getStartDate())
                 .build();
     }
 
-    public List<ProgressRes> getStudyProgressList(long studyId, String email){
+    public List<ProgressRes> getStudyProgressList(long studyId, String email) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
+        // 이메일로 멤버 찾기
         Member member = memberRepository.findByEmail(email);
-        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
-        );
+
+        // 멤버와 스터디에 해당하는 StudyParticipation 찾기 (존재하지 않을 수도 있음)
+        Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
 
         return progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
-                    boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
-                    double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
+                    Optional<Boolean> isMemberCompleted;
+                    if (optionalStudyParticipation.isPresent()) {
+                        // 해당 StudyParticipation과 Progress로 Completed 엔티티 존재 여부 확인
+                        isMemberCompleted = Optional.of(completedRepository.existsByProgressAndStudyParticipation(progress, optionalStudyParticipation.get()));
+                    } else {
+                        isMemberCompleted = Optional.empty();
+                    }
 
+                    // 각 progress에 대해 완료된 멤버의 수를 계산
+                    long completedCount = completedRepository.countByProgress(progress);
+
+                    // 전체 멤버 수 대비 완료된 멤버의 비율을 계산
+                    double rate = (double) completedCount / study.getCurrentMembers();
+
+                    // 각 주차에 대한 정보를 ProgressRes 객체로 생성
                     return ProgressRes.builder()
                             .week(progress.getWeek())
-                            .completed(completed)
                             .start_date(progress.getStartDate())
                             .participant_rate(rate)
+                            .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부 (null이면 참여하지 않은 것으로 간주)
                             .build();
                 }).collect(Collectors.toList());
-
     }
+
 
     public StudyDetailRes getStudyDetail(long studyId){
-        Study study = studyRepository.findById(studyId).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
-        );
+            Study study = studyRepository.findById(studyId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+            );
 
-        double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
+            double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
 
-        return StudyDetailRes.builder()
-                .max_members(study.getMaxMembers())
-                .current_members(study.getCurrentMembers())
-                .study_status(study.getStatus())
-                .total_progress_rate(progress)
-                .build();
+            return StudyDetailRes.builder()
+                    .max_members(study.getMaxMembers())
+                    .current_members(study.getCurrentMembers())
+                    .study_status(study.getStatus())
+                    .total_progress_rate(progress)
+                    .build();
+        }
     }
-}

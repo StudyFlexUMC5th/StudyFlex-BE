@@ -8,10 +8,6 @@ import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.MsgEntity;
 import com.umc.StudyFlexBE.service.NaverService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +15,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-
 @RestController
 @RequestMapping("/app/naver")
 public class NaverController {
@@ -45,6 +41,9 @@ public class NaverController {
         return ResponseEntity.ok(response);
 
     }
+
+
+
     @GetMapping("/callback")
     public ResponseEntity<?> callback(HttpServletRequest request) {
         try {
@@ -76,6 +75,7 @@ public class NaverController {
             return ResponseEntity.ok(e.getMessage());
         }
     }
+
 
     @PostMapping("/loginTemp")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {

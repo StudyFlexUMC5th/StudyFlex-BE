@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -13,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.IOException;
 
 
 
@@ -28,8 +29,17 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String jwt = resolveToken(httpServletRequest);
+
+
         String requestURI = httpServletRequest.getRequestURI();
+
+        if ("/app/naver/callback".equals(requestURI)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
+
+        String jwt = resolveToken(httpServletRequest);
 
         if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
@@ -53,4 +63,6 @@ public class JwtFilter extends GenericFilterBean {
         return null;
 
     }
+
+
 }
