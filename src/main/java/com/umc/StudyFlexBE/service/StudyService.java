@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -287,11 +288,17 @@ public class StudyService {
         // 이메일로 멤버 찾기
         Member member = memberRepository.findByEmail(email);
 
+        // 멤버와 스터디에 해당하는 StudyParticipation 찾기 (존재하지 않을 수도 있음)
+        Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
+
         return progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
-                    // 해당 멤버가 이 progress에 대해 완료했는지 여부를 확인
-                    boolean isMemberCompleted = completedRepository.existsByProgressAndMember(progress, member);
+                    Boolean isMemberCompleted = null;
+                    if (optionalStudyParticipation.isPresent()) {
+                        // 해당 StudyParticipation과 Progress로 Completed 엔티티 존재 여부 확인
+                        isMemberCompleted = completedRepository.existsByProgressAndStudyParticipation(progress, optionalStudyParticipation.get());
+                    }
 
                     // 각 progress에 대해 완료된 멤버의 수를 계산
                     long completedCount = completedRepository.countByProgress(progress);
@@ -304,10 +311,11 @@ public class StudyService {
                             .week(progress.getWeek())
                             .start_date(progress.getStartDate())
                             .participant_rate(rate)
-                            .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부
+                            .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부 (null이면 참여하지 않은 것으로 간주)
                             .build();
                 }).collect(Collectors.toList());
     }
+
 
     public StudyDetailRes getStudyDetail(long studyId){
             Study study = studyRepository.findById(studyId).orElseThrow(

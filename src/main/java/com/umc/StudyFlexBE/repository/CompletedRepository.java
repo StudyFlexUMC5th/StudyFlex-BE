@@ -13,5 +13,4 @@ public interface CompletedRepository extends JpaRepository<Completed, Long> {
 
     long countByProgress(Progress progress);
 
-    boolean existsByProgressAndMember(Progress progress, Member member);
 }
