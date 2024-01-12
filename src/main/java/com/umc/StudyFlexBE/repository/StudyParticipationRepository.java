@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface StudyParticipationRepository extends JpaRepository<StudyParticipation, Long> {
     boolean existsByStudyAndMember(Study study, Member member);
     Optional<StudyParticipation> findByStudyAndMember(Study study, Member member);
+    Optional<StudyParticipation> findByMember(Member member);
 }
