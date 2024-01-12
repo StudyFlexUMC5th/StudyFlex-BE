@@ -5,7 +5,6 @@ import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.*;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -279,45 +280,48 @@ public class StudyService {
                 .build();
     }
 
-    public List<ProgressRes> getStudyProgressList(long studyId, String email){
+    public List<ProgressRes> getStudyProgressList(long studyId, String email) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
         Member member = memberRepository.findByEmail(email);
-       StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT));
+        Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
+
+        if (!optionalStudyParticipation.isPresent()) {
+            return Collections.emptyList();
+        }
+            StudyParticipation studyParticipation = optionalStudyParticipation.get();
 
 
-        return progressRepository.findAllByStudy(study)
-                .stream()
-                .map(progress -> {
-                   boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
-                   // 스터디 참여자 완료 여부 확인, 진행 상황마다 완료 여부 확인,  completed에 저장
-                   double rate = (progress.getCompletedNumber() * 1.0)/study.getCurrentMembers();
-                    // 각 진행 상황의 완료된 멤버 수를 스터디 현재 멤버 수로 나눈 값
-                    return ProgressRes.builder()
-                            .week(progress.getWeek())
-                            .completed(completed)
-                            .start_date(progress.getStartDate())
-                            .participant_rate(rate)
-                            .build();
-                }).collect(Collectors.toList());
+            return progressRepository.findAllByStudy(study)
+                    .stream()
+                    .map(progress -> {
+                        boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
+                        double rate = (progress.getCompletedNumber() * 1.0) / study.getCurrentMembers();
+                        return ProgressRes.builder()
+                                .week(progress.getWeek())
+                                .completed(completed)
+                                .start_date(progress.getStartDate())
+                                .participant_rate(rate)
+                                .build();
+                    }).collect(Collectors.toList());
+
+
 
     }
+        public StudyDetailRes getStudyDetail(long studyId){
+            Study study = studyRepository.findById(studyId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
+            );
 
-    public StudyDetailRes getStudyDetail(long studyId){
-        Study study = studyRepository.findById(studyId).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
-        );
+            double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
 
-        double progress = (study.getCurrentMembers()*1.0)/study.getMaxMembers();
-
-        return StudyDetailRes.builder()
-                .max_members(study.getMaxMembers())
-                .current_members(study.getCurrentMembers())
-                .study_status(study.getStatus())
-                .total_progress_rate(progress)
-                .build();
+            return StudyDetailRes.builder()
+                    .max_members(study.getMaxMembers())
+                    .current_members(study.getCurrentMembers())
+                    .study_status(study.getStatus())
+                    .total_progress_rate(progress)
+                    .build();
+        }
     }
-}
