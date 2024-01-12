@@ -285,16 +285,17 @@ public class StudyService {
         );
 
         Member member = memberRepository.findByEmail(email);
-        StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member).orElseThrow(
-                () -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT)
-        );
+       StudyParticipation studyParticipation = studyParticipationRepository.findByStudyAndMember(study, member)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_STUDY_PARTICIPANT));
+
 
         return progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
-                    boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
-                    double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
-
+                   boolean completed = completedRepository.existsByProgressAndStudyParticipation(progress, studyParticipation);
+                   // 스터디 참여자 완료 여부 확인, 진행 상황마다 완료 여부 확인,  completed에 저장
+                   double rate = (progress.getCompletedNumber() * 1.0)/study.getCurrentMembers();
+                    // 각 진행 상황의 완료된 멤버 수를 스터디 현재 멤버 수로 나눈 값
                     return ProgressRes.builder()
                             .week(progress.getWeek())
                             .completed(completed)
