@@ -3,7 +3,10 @@ package com.umc.StudyFlexBE.controller;
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
 import com.umc.StudyFlexBE.dto.request.NaverDto;
 import com.umc.StudyFlexBE.dto.response.APICallException;
+import com.umc.StudyFlexBE.dto.response.BaseResponse;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.InvalidAuthorizationCodeException;
+import com.umc.StudyFlexBE.dto.response.LoginRes;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.MsgEntity;
 import com.umc.StudyFlexBE.service.NaverService;
@@ -45,7 +48,7 @@ public class NaverController {
 
 
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(HttpServletRequest request) {
+    public BaseResponse<?> callback(HttpServletRequest request) {
         try {
             // 네이버 사용자 정보 가져옴
             NaverDto naverUser = naverService.getNaverInfo(request.getParameter("code"));
@@ -64,15 +67,11 @@ public class NaverController {
             // 생성된 Authentication 객체를 사용하여 토큰 생성
             String token = jwtTokenProvider.createToken(authentication);
 
-            // 응답 맵 생성 및 값 추가
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("userInfo", naverUser);
-            response.put("isNewUser", isNewUser);
+            LoginRes naverLoginRes = new LoginRes(token, naverUser.getEmail(), isNewUser);
 
-            return ResponseEntity.ok(response);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, naverLoginRes);
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return new BaseResponse<>(BaseResponseStatus.NAVER_LOGIN_FAILED);
         }
     }
 
