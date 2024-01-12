@@ -274,7 +274,7 @@ public class StudyService {
         double rate = (progress.getCompletedNumber()*1.0)/study.getCurrentMembers();
 
         return ProgressRes.builder()
-                .completed(true)
+                .completed(Optional.of(true))
                 .participant_rate(rate)
                 .start_date(progress.getStartDate())
                 .build();
@@ -294,10 +294,12 @@ public class StudyService {
         return progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
-                    Boolean isMemberCompleted = null;
+                    Optional<Boolean> isMemberCompleted;
                     if (optionalStudyParticipation.isPresent()) {
                         // 해당 StudyParticipation과 Progress로 Completed 엔티티 존재 여부 확인
-                        isMemberCompleted = completedRepository.existsByProgressAndStudyParticipation(progress, optionalStudyParticipation.get());
+                        isMemberCompleted = Optional.of(completedRepository.existsByProgressAndStudyParticipation(progress, optionalStudyParticipation.get()));
+                    } else {
+                        isMemberCompleted = Optional.empty();
                     }
 
                     // 각 progress에 대해 완료된 멤버의 수를 계산
