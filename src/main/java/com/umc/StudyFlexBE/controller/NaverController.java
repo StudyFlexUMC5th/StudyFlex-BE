@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins="*", allowedHeaders="*")
 @RestController
 @RequestMapping("/app/naver")
 public class NaverController {
@@ -40,6 +40,9 @@ public class NaverController {
         response.put("naverUrl", naverUrl);
         return ResponseEntity.ok(response);
     }
+
+
+    @CrossOrigin(origins = "*")
     @GetMapping("/callback")
     public ResponseEntity<?> callback(HttpServletRequest request) {
         try {

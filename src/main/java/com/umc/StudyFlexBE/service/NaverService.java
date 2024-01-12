@@ -21,8 +21,6 @@ import org.springframework.web.client.RestTemplate;
 
 
 
-
-
 @NoArgsConstructor(force = true)
 @Service
 public class NaverService {
