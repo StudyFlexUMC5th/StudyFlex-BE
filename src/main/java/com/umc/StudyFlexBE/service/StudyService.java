@@ -284,10 +284,16 @@ public class StudyService {
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
+        // 이메일로 멤버 찾기
+        Member member = memberRepository.findByEmail(email);
+
         return progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
-                    // 각 progress에 대해 completed 엔티티를 조회하여 완료된 멤버의 수를 계산
+                    // 해당 멤버가 이 progress에 대해 완료했는지 여부를 확인
+                    boolean isMemberCompleted = completedRepository.existsByProgressAndMember(progress, member);
+
+                    // 각 progress에 대해 완료된 멤버의 수를 계산
                     long completedCount = completedRepository.countByProgress(progress);
 
                     // 전체 멤버 수 대비 완료된 멤버의 비율을 계산
@@ -298,11 +304,12 @@ public class StudyService {
                             .week(progress.getWeek())
                             .start_date(progress.getStartDate())
                             .participant_rate(rate)
-                            .completed(completedCount > 0) // 한 명 이상 완료했다면 해당 주차는 완료된 것으로 간주
+                            .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부
                             .build();
                 }).collect(Collectors.toList());
     }
-        public StudyDetailRes getStudyDetail(long studyId){
+
+    public StudyDetailRes getStudyDetail(long studyId){
             Study study = studyRepository.findById(studyId).orElseThrow(
                     () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
             );
