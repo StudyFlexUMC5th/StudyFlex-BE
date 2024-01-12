@@ -3,6 +3,7 @@ package com.umc.StudyFlexBE.dto.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Builder
 @Getter
@@ -12,5 +13,5 @@ public class ProgressRes {
     private int week;
     private LocalDate start_date;
     private double participant_rate;
-    private boolean completed;
+    private Optional<Boolean> completed;
 }
