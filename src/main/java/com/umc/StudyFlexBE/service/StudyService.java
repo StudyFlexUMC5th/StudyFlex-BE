@@ -106,7 +106,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void createStudy(StudyReq studyReq, String email){
+    public Long createStudy(StudyReq studyReq, String email){
 
         Member member = memberRepository.findByEmail(email);
         //스터디 생성 로직
@@ -116,8 +116,8 @@ public class StudyService {
         int maxMembers;
         int targetWeek;
         try {
-            maxMembers = Integer.valueOf(studyReq.getMax_members());
-            targetWeek = Integer.valueOf(studyReq.getMax_members());
+            maxMembers = Integer.parseInt(studyReq.getMax_members());
+            targetWeek = Integer.parseInt(studyReq.getTarget_week());
         }catch (NumberFormatException e){
             throw new BaseException(BaseResponseStatus.INVALID_NUMBER);
         }
@@ -131,12 +131,13 @@ public class StudyService {
                 .name(studyReq.getStudy_name())
                 .thumbnailUrl(url)
                 .maxMembers(maxMembers)
-                .targetWeek(maxMembers)
+                .targetWeek(targetWeek)
                 .currentMembers(1)
+                .completedWeek(0)
                 .completedAt(LocalDateTime.now().plusWeeks(targetWeek))
                 .build();
 
-        studyRepository.save(study);
+        Study save = studyRepository.save(study);
 
         // 스터디 주차별 정보 생성 로직
         List<Progress> progressesList = new ArrayList<>();
@@ -153,6 +154,8 @@ public class StudyService {
         }
 
         progressRepository.saveAll(progressesList);
+
+        return save.getId();
     }
 
 

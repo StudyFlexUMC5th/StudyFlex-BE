@@ -8,6 +8,10 @@ import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.MsgEntity;
 import com.umc.StudyFlexBE.service.NaverService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +19,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins="*", allowedHeaders="*")
@@ -35,14 +38,16 @@ public class NaverController {
 
     @GetMapping("/login")
     public ResponseEntity<?> getNaverLogin() {
+
         String naverUrl = naverService.getNaverLogin();
         Map<String, String> response = new HashMap<>();
         response.put("naverUrl", naverUrl);
         return ResponseEntity.ok(response);
+
     }
 
 
-    @CrossOrigin(origins = "*")
+
     @GetMapping("/callback")
     public ResponseEntity<?> callback(HttpServletRequest request) {
         try {
@@ -71,7 +76,7 @@ public class NaverController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MsgEntity("인증 과정에서 오류가 발생했습니다.", null));
+            return ResponseEntity.ok(e.getMessage());
         }
     }
 
