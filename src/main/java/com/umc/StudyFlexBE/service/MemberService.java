@@ -245,4 +245,12 @@ public class MemberService {
         memberRepository.save(member);
 
     }
+
+    public void saveName(String name) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Member member = memberRepository.findByEmail(email);
+        member.setName(name);
+        memberRepository.save(member);
+    }
 }

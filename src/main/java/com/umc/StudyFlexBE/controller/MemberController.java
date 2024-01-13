@@ -113,6 +113,7 @@ public class MemberController {
             if (result.get("success").equals(false)) {
                 return new BaseResponse<>(BaseResponseStatus.WEB_MAIL_CODE_FAILED);
             }
+            memberService.saveName(sendAuthCodeDto.getName());
             return new BaseResponse<String>(BaseResponseStatus.SUCCESS, "인증 코드 발송 완료.");
         } catch (Exception e) {
             return new BaseResponse<>(BaseResponseStatus.SEND_EMAIL_FAILED);
