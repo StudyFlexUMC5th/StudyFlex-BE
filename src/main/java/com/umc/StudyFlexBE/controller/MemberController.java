@@ -171,25 +171,6 @@ public class MemberController {
 
     }
 
-    @GetMapping("/myStudy")
-    public BaseResponse<?> getParticipationStudy(){
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            GetParticipationStudyRes res = memberService.getParticipationStudy(email);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS,res);
-        } catch (BaseException e) {
-            if(e.getStatus().equals(BaseResponseStatus.NO_SUCH_EMAIL)) {
-                return new BaseResponse<>(e.getStatus());
-            }else{
-                return new BaseResponse<>(BaseResponseStatus.GET_MY_STUDY_FAILED);
-            }
-        }
-
-
-    }
-
-
     @GetMapping("testauth")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public BaseResponse<?> test() {
