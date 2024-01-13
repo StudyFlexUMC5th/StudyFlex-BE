@@ -1,5 +1,6 @@
 package com.umc.StudyFlexBE.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class Category {
     private String name;
 
     @OneToOne(mappedBy = "category")
+    @JsonIgnore
+
     private Study study;
 
 }
