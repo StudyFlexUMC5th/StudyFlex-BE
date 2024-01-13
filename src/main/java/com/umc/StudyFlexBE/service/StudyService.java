@@ -108,14 +108,15 @@ public class StudyService {
     @Transactional
     public boolean participation(Long studyId, String email){
         Member member = memberRepository.findByEmail(email);
-
-        if(studyParticipationRepository.findByMember(member).isPresent()){
-            return false;
-        }
-        //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
+
+        if(studyParticipationRepository.findByStudyAndMember(study, member).isPresent()){
+            return false;
+        }
+
+        //스터디 참여 테이블에 반영
 
         if(study.getStatus().equals(StudyStatus.COMPLETED)){
             throw new BaseException(BaseResponseStatus.FULL_STUDY_MEMBER);
