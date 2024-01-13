@@ -161,6 +161,13 @@ public class StudyService {
 
         progressRepository.saveAll(progressesList);
 
+        // 해당 유저를 스터디 참여 테이블에 반영
+        StudyParticipation studyParticipation = StudyParticipation.builder()
+                .study(study)
+                .member(member)
+                .build();
+        studyParticipationRepository.save(studyParticipation);
+
         return StudyRes.builder()
                 .studyName(save.getName())
                 .studyId(save.getId())
