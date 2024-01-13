@@ -3,7 +3,6 @@ package com.umc.StudyFlexBE.controller;
 import com.umc.StudyFlexBE.dto.request.StudyNoticeReq;
 import com.umc.StudyFlexBE.dto.request.StudyReq;
 import com.umc.StudyFlexBE.dto.response.*;
-import com.umc.StudyFlexBE.entity.Study;
 import com.umc.StudyFlexBE.service.StudyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,19 +68,19 @@ public class StudyController {
         }
     }
     @GetMapping("/latest")
-    public ResponseEntity<List<Study>> getLatestStudies() {
-        List<Study> latestStudies = studyService.getLatestStudies();
+    public ResponseEntity<List<StudyMainPageResponseDto>> getLatestStudies() {
+        List<StudyMainPageResponseDto> latestStudies = studyService.getLatestStudies();
         return ResponseEntity.ok(latestStudies);
     }
 
     @GetMapping("/open")
-    public ResponseEntity<List<Study>> getOpenStudies() {
-        List<Study> openStudies = studyService.getOpenStudies();
+    public ResponseEntity<List<StudyMainPageResponseDto>> getOpenStudies() {
+        List<StudyMainPageResponseDto> openStudies = studyService.getOpenStudies();
         return ResponseEntity.ok(openStudies);
     }
     @GetMapping("/ranking")
-    public ResponseEntity<List<Study>> getStudyRanking() {
-        List<Study> rankedStudies = studyService.getRankedStudies();
+    public ResponseEntity<List<StudyMainPageResponseDto>> getStudyRanking() {
+        List<StudyMainPageResponseDto> rankedStudies = studyService.getRankedStudies();
         return ResponseEntity.ok(rankedStudies);
     }
 

@@ -2,6 +2,7 @@ package com.umc.StudyFlexBE.repository;
 
 import com.umc.StudyFlexBE.entity.Category;
 import com.umc.StudyFlexBE.entity.Study;
+import com.umc.StudyFlexBE.entity.StudyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     List<Study> findTop5ByOrderByCreatedAtDesc();
 
-    List<Study> findByStatus(String status);
+    List<Study> findByStatus(StudyStatus studyStatus);
 
     boolean existsByName(String name);
 

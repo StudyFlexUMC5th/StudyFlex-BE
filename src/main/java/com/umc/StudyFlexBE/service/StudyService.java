@@ -51,11 +51,34 @@ public class StudyService {
         this.awsS3Service = awsS3Service;
     }
 
-    public List<Study> getLatestStudies() {
-        return studyRepository.findTop5ByOrderByCreatedAtDesc();
+    public List<StudyMainPageResponseDto> getLatestStudies() {
+        List<Study> latestStudies = studyRepository.findTop5ByOrderByCreatedAtDesc();
+
+        return latestStudies.stream()
+                .map(study -> StudyMainPageResponseDto.builder()
+                        .studyId(study.getId().intValue())
+                        .studyName(study.getName())
+                        .thumbnailUrl(study.getThumbnailUrl())
+                        .studyStatus(study.getStatus().toString())
+                        .maxMembers(study.getMaxMembers())
+                        .currentMembers(study.getCurrentMembers())
+                        .build())
+                .collect(Collectors.toList());
     }
-    public List<Study> getOpenStudies() {
-        return studyRepository.findByStatus("모집중"); // 또는 StudyStatus.모집중, enum 사용시
+
+    public List<StudyMainPageResponseDto> getOpenStudies() {
+        List<Study> openedStudies = studyRepository.findByStatus(StudyStatus.valueOf("RECRUITING"));
+
+        return openedStudies.stream()
+                .map(study -> StudyMainPageResponseDto.builder()
+                        .studyId(study.getId().intValue())
+                        .studyName(study.getName())
+                        .thumbnailUrl(study.getThumbnailUrl())
+                        .studyStatus(study.getStatus().toString())
+                        .maxMembers(study.getMaxMembers())
+                        .currentMembers(study.getCurrentMembers())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public void checkDuplicateStudyName(String name){
@@ -175,12 +198,20 @@ public class StudyService {
     }
 
 
-    public List<Study> getRankedStudies() {
+    public List<StudyMainPageResponseDto> getRankedStudies() {
         List<Study> studies = studyRepository.findAll();
         studies.forEach(this::calculateRankScore);
         return studies.stream()
                 .sorted((s1, s2) -> Double.compare(s2.getRankScore(), s1.getRankScore()))
                 .limit(3)
+                .map(study -> StudyMainPageResponseDto.builder()
+                        .studyId(study.getId().intValue()) // Long을 int로 변환 (필요에 따라 조정)
+                        .studyName(study.getName())
+                        .thumbnailUrl(study.getThumbnailUrl())
+                        .studyStatus(study.getStatus().toString())
+                        .maxMembers(study.getMaxMembers())
+                        .currentMembers(study.getCurrentMembers())
+                        .build())
                 .collect(Collectors.toList());
     }
 
