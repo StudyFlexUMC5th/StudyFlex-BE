@@ -67,7 +67,7 @@ public class StudyService {
     }
 
     public List<StudyMainPageResponseDto> getOpenStudies() {
-        List<Study> openedStudies = studyRepository.findByStatus(StudyStatus.valueOf("RECRUITING"));
+        List<Study> openedStudies = studyRepository.findByStatus(StudyStatus.RECRUITING);
 
         return openedStudies.stream()
                 .map(study -> StudyMainPageResponseDto.builder()
