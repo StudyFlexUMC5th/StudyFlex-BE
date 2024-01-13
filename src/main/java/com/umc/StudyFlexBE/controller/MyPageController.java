@@ -38,7 +38,7 @@ public class MyPageController {
     public BaseResponse<?> getParticipationStudy(){
         try {
             String email = getEmail();
-            List<GetParticipationStudyRes> res = myPageService.getParticipationStudies(email);
+            GetParticipationStudyRes res = myPageService.getParticipationStudy(email);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS,res);
         } catch (BaseException e) {
             if(e.getStatus().equals(BaseResponseStatus.NO_SUCH_EMAIL)) {
