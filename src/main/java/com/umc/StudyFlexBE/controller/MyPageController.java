@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/app/myPage")
@@ -36,7 +38,7 @@ public class MyPageController {
     public BaseResponse<?> getParticipationStudy(){
         try {
             String email = getEmail();
-            GetParticipationStudyRes res = myPageService.getParticipationStudy(email);
+            List<GetParticipationStudyRes> res = myPageService.getParticipationStudies(email);
             return new BaseResponse<>(BaseResponseStatus.SUCCESS,res);
         } catch (BaseException e) {
             if(e.getStatus().equals(BaseResponseStatus.NO_SUCH_EMAIL)) {
