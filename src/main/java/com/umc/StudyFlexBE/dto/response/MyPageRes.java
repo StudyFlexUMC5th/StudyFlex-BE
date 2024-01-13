@@ -11,6 +11,5 @@ public class MyPageRes {
     private String email;
     private boolean isSchoolCertification;
     private String schoolName;
-    private String memberImgUrl;
 
 }
