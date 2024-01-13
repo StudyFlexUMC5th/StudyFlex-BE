@@ -112,7 +112,7 @@ public class StudyService {
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
-        if(studyParticipationRepository.findByStudyAndMember(study, member).isPresent()){
+        if(studyParticipationRepository.findByMember(member).isPresent()){
             return false;
         }
 
