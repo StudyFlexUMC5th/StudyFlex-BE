@@ -1,6 +1,10 @@
 package com.umc.StudyFlexBE.service;
 
 
+import static com.umc.StudyFlexBE.entity.MemberType.general;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
+import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
@@ -10,10 +14,13 @@ import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.LoginRes;
+import com.umc.StudyFlexBE.dto.response.GetParticipationStudyRes;
 import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.OAuthProfile;
+import com.umc.StudyFlexBE.entity.StudyParticipation;
 import com.umc.StudyFlexBE.repository.MemberRepository;
+import com.umc.StudyFlexBE.repository.StudyParticipationRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import static com.umc.StudyFlexBE.entity.MemberType.general;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_CERTIFIED;
-import static com.umc.StudyFlexBE.entity.Role.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor

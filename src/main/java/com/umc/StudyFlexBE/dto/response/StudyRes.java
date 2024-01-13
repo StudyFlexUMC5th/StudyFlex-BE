@@ -4,11 +4,9 @@ import lombok.*;
 
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LoginRes {
-    String token;
-    String email;
-    boolean isNewUser;
+public class StudyRes {
+    private Long studyId;
+    private String studyName;
 }

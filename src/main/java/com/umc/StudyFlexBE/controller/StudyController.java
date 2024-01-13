@@ -28,26 +28,44 @@ public class StudyController {
 
     @PostMapping
     public BaseResponse<?> createStudy(@ModelAttribute StudyReq study){
-        Long id = studyService.createStudy(study, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, id);
+        try {
+            StudyRes studyRes = studyService.createStudy(study, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyRes);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/checkName")
     public BaseResponse<?> checkDuplicateStudyName(@RequestParam String study_name){
-        studyService.checkDuplicateStudyName(study_name);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS,"사용가능한 스터디 이름입니다.");
+        try {
+            studyService.checkDuplicateStudyName(study_name);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "사용가능한 스터디 이름입니다.");
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/checkAuthority")
     public BaseResponse<?> checkAuthority(@PathVariable Long study_id){
-        StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyAuthorityType);
+        try{
+            StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyAuthorityType);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @PostMapping("/{study_id}/participation")
     public BaseResponse<?> participation(@PathVariable Long study_id){
-        studyService.participation(study_id, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 참여에 성공했습니다.");
+        try {
+            StudyParticipationRes res = StudyParticipationRes.builder()
+                    .success(studyService.participation(study_id, getEmail()))
+                    .build();
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, res);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
     @GetMapping("/latest")
     public ResponseEntity<List<StudyMainPageResponseDto>> getLatestStudies() {
@@ -70,48 +88,72 @@ public class StudyController {
     public BaseResponse<?> postStudyNotice(
             @PathVariable Long study_id,
             @RequestBody @Valid StudyNoticeReq studyNoticeReq){
-
-        studyService.postStudyNotice(study_id,getEmail(),studyNoticeReq);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, "공지사항이 등록되었습니다.");
+        try {
+            studyService.postStudyNotice(study_id, getEmail(), studyNoticeReq);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "공지사항이 등록되었습니다.");
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/notice/{notice_id}")
     public BaseResponse<?> getStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id){
-
-        StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
+        try {
+            StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotice);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @DeleteMapping("/{study_id}/notice/{notice_id}")
     public BaseResponse<?> deleteStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id){
-
-        studyService.deleteStudyNotice(study_id, notice_id, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+        try {
+            studyService.deleteStudyNotice(study_id, notice_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/notice")
     public BaseResponse<?> getStudyNotices(@PathVariable Long study_id){
-        StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, getEmail());
-
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyNotices);
+        try {
+            StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyNotices);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/completed")
     public BaseResponse<?> checkCompletedStudyWeek(@PathVariable Long study_id, @RequestParam int week){
-        ProgressRes progressReq = studyService.checkCompletedStudyWeek(study_id, week, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, progressReq);
+        try {
+            ProgressRes progressReq = studyService.checkCompletedStudyWeek(study_id, week, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, progressReq);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/progress")
     public BaseResponse<?> getStudyProgressList(@PathVariable Long study_id){
-        List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyProgressList);
+        try {
+            List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyProgressList);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/{study_id}/details")
     public BaseResponse<?> getStudyDetail(@PathVariable Long study_id){
-        StudyDetailRes studyDetail = studyService.getStudyDetail(study_id);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS,studyDetail);
+        try {
+            StudyDetailRes studyDetail = studyService.getStudyDetail(study_id);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyDetail);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     private String getEmail(){
