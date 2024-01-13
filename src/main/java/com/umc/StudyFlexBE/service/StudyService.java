@@ -106,14 +106,14 @@ public class StudyService {
     }
 
     @Transactional
-    public boolean participation(Long studyId, String email){
+    public void participation(Long studyId, String email){
         Member member = memberRepository.findByEmail(email);
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
 
         if(studyParticipationRepository.findByMember(member).isPresent()){
-            return false;
+            throw new BaseException(BaseResponseStatus.EXISTS_USER_STUDY);
         }
 
         //스터디 참여 테이블에 반영
@@ -130,8 +130,6 @@ public class StudyService {
 
         //스터디 현제 인원 변경
         study.participationStudy();
-
-        return true;
     }
 
     @Transactional
@@ -141,6 +139,14 @@ public class StudyService {
         //스터디 생성 로직
         Category category = categoryRepository.findByName(studyReq.getCategory_name())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_CATEGORY));
+
+        //스터디 중복 검사 - 카테고리, 유저
+        if(studyRepository.existsByCategory(category)){
+            throw new BaseException(BaseResponseStatus.EXISTS_CATEGORY_STUDY);
+        }
+        if(studyParticipationRepository.existsByMember(member)){
+            throw new BaseException(BaseResponseStatus.EXISTS_USER_STUDY);
+        }
 
         int maxMembers;
         int targetWeek;

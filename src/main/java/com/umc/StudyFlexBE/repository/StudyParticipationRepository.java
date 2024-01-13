@@ -6,7 +6,6 @@ import com.umc.StudyFlexBE.entity.StudyParticipation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,5 +13,6 @@ public interface StudyParticipationRepository extends JpaRepository<StudyPartici
     boolean existsByStudyAndMember(Study study, Member member);
     Optional<StudyParticipation> findByStudyAndMember(Study study, Member member);
     Optional<StudyParticipation> findByMember(Member member);
+    boolean existsByMember(Member member);
 
 }

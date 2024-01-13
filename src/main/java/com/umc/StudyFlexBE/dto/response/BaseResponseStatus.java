@@ -67,6 +67,8 @@ public enum BaseResponseStatus {
     FULL_STUDY_MEMBER(false, 7001, "스터디 맴버가 이미 가득 찼습니다."),
     NO_STUDY_PARTICIPANT(false,7002, "스터디 참여 맴버가 아닙니다."),
     NO_SUCH_WEEK(false,7003, "해당 주차 학습을 찾을 수 없습니다."),
+    EXISTS_CATEGORY_STUDY(false,7004, "해당 카테고리 스터디가 이미 존재합니다"),
+    EXISTS_USER_STUDY(false,7005, "하나의 스터디만 참여가능합니다."),
 
     /**
      * S3 : S3

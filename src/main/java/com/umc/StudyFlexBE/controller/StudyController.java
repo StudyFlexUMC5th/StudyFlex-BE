@@ -59,10 +59,8 @@ public class StudyController {
     @PostMapping("/{study_id}/participation")
     public BaseResponse<?> participation(@PathVariable Long study_id){
         try {
-            StudyParticipationRes res = StudyParticipationRes.builder()
-                    .success(studyService.participation(study_id, getEmail()))
-                    .build();
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS, res);
+            studyService.participation(study_id, getEmail());
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 참여 성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

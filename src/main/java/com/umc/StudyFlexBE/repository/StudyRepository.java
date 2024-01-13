@@ -23,6 +23,6 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     boolean existsByName(String name);
 
-
+    boolean existsByCategory(Category category);
 
 }
