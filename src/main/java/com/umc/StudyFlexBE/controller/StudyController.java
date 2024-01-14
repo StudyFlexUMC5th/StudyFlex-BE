@@ -68,20 +68,32 @@ public class StudyController {
         }
     }
     @GetMapping("/latest")
-    public ResponseEntity<List<StudyMainPageResponseDto>> getLatestStudies() {
-        List<StudyMainPageResponseDto> latestStudies = studyService.getLatestStudies();
-        return ResponseEntity.ok(latestStudies);
+    public BaseResponse<?> getLatestStudies() {
+        try {
+            List<StudyMainPageResponseDto> latestStudies = studyService.getLatestStudies();
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, latestStudies);
+        }catch (BaseException e){
+            return  new BaseResponse<>(e.getStatus());
+        }
     }
 
     @GetMapping("/open")
-    public ResponseEntity<List<StudyMainPageResponseDto>> getOpenStudies() {
-        List<StudyMainPageResponseDto> openStudies = studyService.getOpenStudies();
-        return ResponseEntity.ok(openStudies);
+    public BaseResponse<?> getOpenStudies() {
+        try {
+            List<StudyMainPageResponseDto> openStudies = studyService.getOpenStudies();
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, openStudies);
+        }catch (BaseException e){
+            return  new BaseResponse<>(e.getStatus());
+        }
     }
     @GetMapping("/ranking")
-    public ResponseEntity<List<StudyMainPageResponseDto>> getStudyRanking() {
-        List<StudyMainPageResponseDto> rankedStudies = studyService.getRankedStudies();
-        return ResponseEntity.ok(rankedStudies);
+    public BaseResponse<?> getStudyRanking() {
+        try{
+            List<StudyMainPageResponseDto> rankedStudies = studyService.getRankedStudies();
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, rankedStudies);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @PostMapping("/{study_id}/postNotice")
