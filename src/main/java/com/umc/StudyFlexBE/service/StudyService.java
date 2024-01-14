@@ -386,4 +386,10 @@ public class StudyService {
                     .total_progress_rate(progress)
                     .build();
         }
+
+    public void deleteStudy(Long studyId) {
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY));
+        studyRepository.delete(study);
     }
+}

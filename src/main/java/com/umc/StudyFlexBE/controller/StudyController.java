@@ -154,6 +154,16 @@ public class StudyController {
         }
     }
 
+    @DeleteMapping("/{study_id}")
+    public BaseResponse<?> deleteStudy(@PathVariable Long study_id){
+        try {
+            studyService.deleteStudy(study_id);
+            return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 삭제 성공");
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
     private String getEmail(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
