@@ -36,7 +36,7 @@ public class MyPageService {
 
         return MyStudyListRes.builder()
                 .count(myStudyList.size())
-                .myStudyResList(myStudyList)
+                .myStudyList(myStudyList)
                 .build();
     }
 

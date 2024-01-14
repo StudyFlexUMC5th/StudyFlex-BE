@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MyStudyListRes {
     private int count;
-    private List<MyStudyRes> myStudyResList = new ArrayList<>();
+    private List<MyStudyRes> myStudyList = new ArrayList<>();
 }
