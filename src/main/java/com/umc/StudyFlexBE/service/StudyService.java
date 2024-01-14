@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Service
 @Slf4j
@@ -199,22 +201,27 @@ public class StudyService {
     }
 
 
-    public List<StudyMainPageResponseDto> getRankedStudies() {
+    public List<RankResponseDto> getRankedStudies() {
         List<Study> studies = studyRepository.findAll();
         studies.forEach(this::calculateRankScore);
+
+        AtomicInteger rankCounter = new AtomicInteger(1);
+
         return studies.stream()
                 .sorted((s1, s2) -> Double.compare(s2.getRankScore(), s1.getRankScore()))
                 .limit(3)
-                .map(study -> StudyMainPageResponseDto.builder()
-                        .studyId(study.getId().intValue()) // Long을 int로 변환 (필요에 따라 조정)
-                        .studyName(study.getName())
-                        .thumbnailUrl(study.getThumbnailUrl())
-                        .studyStatus(study.getStatus().toString())
-                        .maxMembers(study.getMaxMembers())
-                        .currentMembers(study.getCurrentMembers())
-                        .build())
+                .map(study -> {
+                    RankResponseDto dto = new RankResponseDto();
+                    dto.setRank(rankCounter.getAndIncrement());
+                    dto.setTeamName(study.getName());
+                    dto.setProgressRate(study.getTotalProgressRate());
+                    dto.setMembers(study.getCurrentMembers());
+                    dto.setCategory(study.getCategory().getName());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
     private void calculateRankScore(Study study) {
         int noticeCount = studyNoticeRepository.countByStudy(study);
