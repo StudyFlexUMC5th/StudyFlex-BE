@@ -88,10 +88,11 @@ public class StudyController {
     }
     @GetMapping("/ranking")
     public BaseResponse<?> getStudyRanking() {
-        try{
-            List<StudyMainPageResponseDto> rankedStudies = studyService.getRankedStudies();
+        try {
+            List<RankResponseDto> rankedStudies = studyService.getRankedStudies();
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, rankedStudies);
-        }catch (BaseException e){
+        } catch (BaseException e) {
+
             return new BaseResponse<>(e.getStatus());
         }
     }
