@@ -6,7 +6,9 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class GetParticipationStudyRes {
-    private Boolean isParticipation;
+public class MyStudyRes {
     private Long studyId;
+    private String name;
+
+    private String thumbnailUrl;
 }
