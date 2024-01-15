@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("/app/inquiries")
 public class InquiryController {
     private final InquiryService inquiryService;
@@ -33,7 +34,9 @@ public class InquiryController {
         this.inquiryService = inquiryService;
     }
 
+
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_CERTIFIED','ROLE_USER')")
     public ResponseEntity<BaseResponse<InquiryUploadResponseDto>> postInquiry(
             @RequestBody InquiryUploadRequestDto request) {
         try {
@@ -79,7 +82,7 @@ public class InquiryController {
     }
 
     @PostMapping("/{inquiryId}/answer")
-//    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BaseResponse<InquiryAnswerResponseDto>> postAnswer(
             @PathVariable Long inquiryId,
             @RequestBody InquiryAnswerRequestDto request) {

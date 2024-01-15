@@ -1,7 +1,9 @@
 package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.dto.request.StudyFlexNoticeUploadDto;
-import com.umc.StudyFlexBE.dto.response.*;
+import com.umc.StudyFlexBE.dto.response.BaseException;
+import com.umc.StudyFlexBE.dto.response.BaseResponse;
+import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.StudyFlexNotice.StudyFlexNoticeListResponseDto;
 import com.umc.StudyFlexBE.dto.response.StudyFlexNotice.StudyFlexNoticeResponseDto;
 import com.umc.StudyFlexBE.entity.Notice;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("/app/notices")
 public class StudyFlexNoticeController {
     private final StudyFlexNoticeService StudyFlexNoticeService;
@@ -22,7 +25,7 @@ public class StudyFlexNoticeController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<String>> createNotice(@RequestBody StudyFlexNoticeUploadDto request) {
         try {
             Notice notice = StudyFlexNoticeService.createNotice(request);

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("app/member")
 @RequiredArgsConstructor
 @Slf4j

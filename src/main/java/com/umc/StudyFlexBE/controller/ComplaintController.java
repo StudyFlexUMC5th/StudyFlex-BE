@@ -7,6 +7,7 @@ import com.umc.StudyFlexBE.dto.response.ComplaintResponseDto;
 import com.umc.StudyFlexBE.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("/app/studies")
 public class ComplaintController {
     private final ComplaintService complaintService;

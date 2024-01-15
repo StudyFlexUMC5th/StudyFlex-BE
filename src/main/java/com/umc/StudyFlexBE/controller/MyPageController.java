@@ -3,6 +3,7 @@ package com.umc.StudyFlexBE.controller;
 import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequiredArgsConstructor
 @RequestMapping("/app/myPage")
 public class MyPageController {
