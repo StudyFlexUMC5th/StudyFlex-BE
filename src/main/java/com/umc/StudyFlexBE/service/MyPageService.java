@@ -24,12 +24,12 @@ public class MyPageService {
             throw new BaseException(BaseResponseStatus.NO_SUCH_EMAIL);
         }
         List<StudyParticipation> studyParticipations = studyParticipationRepository.findAllByMember(member);
-        System.out.println(studyParticipations);
 
         List<MyStudyRes> myStudyList = studyParticipations.stream()
                 .map(studyParticipation -> MyStudyRes.builder()
                         .studyId(studyParticipation.getStudy().getId())
                         .name(studyParticipation.getStudy().getName())
+                        .status(studyParticipation.getStudy().getStatus())
                         .thumbnailUrl(studyParticipation.getStudy().getThumbnailUrl())
                         .build())
                 .collect(Collectors.toList());

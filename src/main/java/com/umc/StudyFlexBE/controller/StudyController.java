@@ -13,9 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@PreAuthorize("hasAnyRole('USER')")
+@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
 @RequestMapping("/app/studies")
 public class StudyController {
     private final StudyService studyService;
@@ -152,7 +153,7 @@ public class StudyController {
     @GetMapping("/{study_id}/progress")
     public BaseResponse<?> getStudyProgressList(@PathVariable Long study_id){
         try {
-            List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
+            Map<String, Object> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyProgressList);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -287,6 +285,7 @@ public class StudyService {
                 .stream()
                 .map(studyNotice ->
                         StudyNoticesRes.builder()
+                                .noticeId(studyNotice.getId())
                                 .title(studyNotice.getTitle())
                                 .createAt(studyNotice.getCreatedAt())
                                 .build()
@@ -334,7 +333,7 @@ public class StudyService {
                 .build();
     }
 
-    public List<ProgressRes> getStudyProgressList(long studyId, String email) {
+    public Map<String, Object> getStudyProgressList(long studyId, String email) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -345,7 +344,7 @@ public class StudyService {
         // 멤버와 스터디에 해당하는 StudyParticipation 찾기 (존재하지 않을 수도 있음)
         Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
 
-        return progressRepository.findAllByStudy(study)
+        List<ProgressRes> progressList = progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
                     Optional<Boolean> isMemberCompleted;
@@ -370,7 +369,14 @@ public class StudyService {
                             .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부 (null이면 참여하지 않은 것으로 간주)
                             .build();
                 }).collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", study.getName());
+        result.put("progress", progressList);
+
+        return result;
     }
+
 
 
     public StudyDetailRes getStudyDetail(long studyId){
