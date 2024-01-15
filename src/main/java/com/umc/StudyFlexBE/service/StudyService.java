@@ -285,6 +285,7 @@ public class StudyService {
                 .stream()
                 .map(studyNotice ->
                         StudyNoticesRes.builder()
+                                .noticeId(studyNotice.getId())
                                 .title(studyNotice.getTitle())
                                 .createAt(studyNotice.getCreatedAt())
                                 .build()

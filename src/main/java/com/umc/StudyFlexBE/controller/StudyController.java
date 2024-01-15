@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@PreAuthorize("hasAnyRole('USER')")
+@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
 @RequestMapping("/app/studies")
 public class StudyController {
     private final StudyService studyService;

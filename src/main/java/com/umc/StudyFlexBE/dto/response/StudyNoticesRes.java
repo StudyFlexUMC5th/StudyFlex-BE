@@ -14,4 +14,5 @@ import java.time.LocalDateTime;
 public class StudyNoticesRes {
     private String title;
     private LocalDateTime createAt;
+    private long noticeId;
 }
