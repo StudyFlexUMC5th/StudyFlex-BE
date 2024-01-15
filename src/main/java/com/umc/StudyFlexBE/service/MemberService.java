@@ -19,6 +19,7 @@ import com.umc.StudyFlexBE.repository.MemberRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -47,7 +48,8 @@ public class MemberService {
     private final RestTemplate restTemplate;
     private final JavaMailSender javaMailSender;
 
-
+    @Value("${kakao.redirect.url}")
+    private String KAKAO_REDIRECT_URL;
     public boolean checkEmail(String email) {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
@@ -131,7 +133,7 @@ public class MemberService {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
             params.add("client_id", "a6e75ba812b0214d4f01fdaec0af6ac1");
-            params.add("redirect_uri", "http://localhost:3000/app/member/kakao/callback");
+            params.add("redirect_uri", KAKAO_REDIRECT_URL);
             params.add("code", code);
             HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
             ResponseEntity<String> response = restTemplate.exchange(
