@@ -17,6 +17,10 @@ public class SendAuthCodeDto {
 
     @JsonProperty
     @NotNull
+    private String name;
+
+    @JsonProperty
+    @NotNull
     private String univName;
 
 }

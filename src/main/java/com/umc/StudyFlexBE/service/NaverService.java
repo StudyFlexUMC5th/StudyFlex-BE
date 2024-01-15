@@ -4,6 +4,7 @@ import com.umc.StudyFlexBE.dto.request.NaverDto;
 import com.umc.StudyFlexBE.dto.response.APICallException;
 import com.umc.StudyFlexBE.dto.response.InvalidAuthorizationCodeException;
 import com.umc.StudyFlexBE.entity.Member;
+import com.umc.StudyFlexBE.entity.MemberType;
 import com.umc.StudyFlexBE.entity.Role;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -137,6 +138,7 @@ public class NaverService {
         newMember.setName(naverUser.getName());
         newMember.setPassword(passwordEncoder.encode("defaultPassword"));
         newMember.setRole(Role.ROLE_USER);
+        newMember.setMember_type(MemberType.naver);
         newMember.setNewUser(true); // 새로운 사용자 표시하기
 
         memberRepository.save(newMember);

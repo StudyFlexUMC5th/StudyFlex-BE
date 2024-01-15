@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Service
 @Slf4j
@@ -51,11 +51,34 @@ public class StudyService {
         this.awsS3Service = awsS3Service;
     }
 
-    public List<Study> getLatestStudies() {
-        return studyRepository.findTop5ByOrderByCreatedAtDesc();
+    public List<StudyMainPageResponseDto> getLatestStudies() {
+        List<Study> latestStudies = studyRepository.findTop5ByOrderByCreatedAtDesc();
+
+        return latestStudies.stream()
+                .map(study -> StudyMainPageResponseDto.builder()
+                        .studyId(study.getId().intValue())
+                        .studyName(study.getName())
+                        .thumbnailUrl(study.getThumbnailUrl())
+                        .studyStatus(study.getStatus().toString())
+                        .maxMembers(study.getMaxMembers())
+                        .currentMembers(study.getCurrentMembers())
+                        .build())
+                .collect(Collectors.toList());
     }
-    public List<Study> getOpenStudies() {
-        return studyRepository.findByStatus("모집중"); // 또는 StudyStatus.모집중, enum 사용시
+
+    public List<StudyMainPageResponseDto> getOpenStudies() {
+        List<Study> openedStudies = studyRepository.findByStatus(StudyStatus.RECRUITING);
+
+        return openedStudies.stream()
+                .map(study -> StudyMainPageResponseDto.builder()
+                        .studyId(study.getId().intValue())
+                        .studyName(study.getName())
+                        .thumbnailUrl(study.getThumbnailUrl())
+                        .studyStatus(study.getStatus().toString())
+                        .maxMembers(study.getMaxMembers())
+                        .currentMembers(study.getCurrentMembers())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public void checkDuplicateStudyName(String name){
@@ -83,13 +106,17 @@ public class StudyService {
     }
 
     @Transactional
-    public void participation(Long studyId, String email){
+    public boolean participation(Long studyId, String email){
         Member member = memberRepository.findByEmail(email);
-
-        //스터디 참여 테이블에 반영
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
+
+        if(studyParticipationRepository.findByStudyAndMember(study, member).isPresent()){
+            return false;
+        }
+
+        //스터디 참여 테이블에 반영
 
         if(study.getStatus().equals(StudyStatus.COMPLETED)){
             throw new BaseException(BaseResponseStatus.FULL_STUDY_MEMBER);
@@ -103,10 +130,12 @@ public class StudyService {
 
         //스터디 현제 인원 변경
         study.participationStudy();
+
+        return true;
     }
 
     @Transactional
-    public Long createStudy(StudyReq studyReq, String email){
+    public StudyRes createStudy(StudyReq studyReq, String email){
 
         Member member = memberRepository.findByEmail(email);
         //스터디 생성 로직
@@ -156,18 +185,41 @@ public class StudyService {
 
         progressRepository.saveAll(progressesList);
 
-        return save.getId();
+        // 해당 유저를 스터디 참여 테이블에 반영
+        StudyParticipation studyParticipation = StudyParticipation.builder()
+                .study(study)
+                .member(member)
+                .build();
+        studyParticipationRepository.save(studyParticipation);
+
+        return StudyRes.builder()
+                .studyName(save.getName())
+                .studyId(save.getId())
+                .build();
     }
 
 
-    public List<Study> getRankedStudies() {
+    public List<RankResponseDto> getRankedStudies() {
         List<Study> studies = studyRepository.findAll();
         studies.forEach(this::calculateRankScore);
+
+        AtomicInteger rankCounter = new AtomicInteger(1);
+
         return studies.stream()
                 .sorted((s1, s2) -> Double.compare(s2.getRankScore(), s1.getRankScore()))
                 .limit(3)
+                .map(study -> {
+                    RankResponseDto dto = new RankResponseDto();
+                    dto.setRank(rankCounter.getAndIncrement());
+                    dto.setTeamName(study.getName());
+                    dto.setProgressRate(study.getTotalProgressRate());
+                    dto.setMembers(study.getCurrentMembers());
+                    dto.setCategory(study.getCategory().getName());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
     private void calculateRankScore(Study study) {
         int noticeCount = studyNoticeRepository.countByStudy(study);
@@ -233,6 +285,7 @@ public class StudyService {
                 .stream()
                 .map(studyNotice ->
                         StudyNoticesRes.builder()
+                                .noticeId(studyNotice.getId())
                                 .title(studyNotice.getTitle())
                                 .createAt(studyNotice.getCreatedAt())
                                 .build()
@@ -280,7 +333,7 @@ public class StudyService {
                 .build();
     }
 
-    public List<ProgressRes> getStudyProgressList(long studyId, String email) {
+    public Map<String, Object> getStudyProgressList(long studyId, String email) {
         Study study = studyRepository.findById(studyId).orElseThrow(
                 () -> new BaseException(BaseResponseStatus.NO_SUCH_STUDY)
         );
@@ -291,7 +344,7 @@ public class StudyService {
         // 멤버와 스터디에 해당하는 StudyParticipation 찾기 (존재하지 않을 수도 있음)
         Optional<StudyParticipation> optionalStudyParticipation = studyParticipationRepository.findByStudyAndMember(study, member);
 
-        return progressRepository.findAllByStudy(study)
+        List<ProgressRes> progressList = progressRepository.findAllByStudy(study)
                 .stream()
                 .map(progress -> {
                     Optional<Boolean> isMemberCompleted;
@@ -316,7 +369,14 @@ public class StudyService {
                             .completed(isMemberCompleted) // 현재 멤버가 해당 주차를 완료했는지 여부 (null이면 참여하지 않은 것으로 간주)
                             .build();
                 }).collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", study.getName());
+        result.put("progress", progressList);
+
+        return result;
     }
+
 
 
     public StudyDetailRes getStudyDetail(long studyId){

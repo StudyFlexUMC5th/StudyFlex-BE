@@ -14,9 +14,7 @@ import com.umc.StudyFlexBE.dto.request.SignUpOAuthDto;
 import com.umc.StudyFlexBE.dto.response.BaseException;
 import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
 import com.umc.StudyFlexBE.dto.response.LoginRes;
-import com.umc.StudyFlexBE.entity.KaKaoOAuthToken;
-import com.umc.StudyFlexBE.entity.Member;
-import com.umc.StudyFlexBE.entity.OAuthProfile;
+import com.umc.StudyFlexBE.entity.*;
 import com.umc.StudyFlexBE.repository.MemberRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +82,7 @@ public class MemberService {
             member.setEmail(signUpOAuthDto.getEmail());
             member.setName(signUpOAuthDto.getName());
             member.setPassword(passwordEncoder.encode("12345"));
+            member.setMember_type(MemberType.kakao);
             member.setSchool(signUpOAuthDto.getSchool());
             memberRepository.save(member);
         } else{
@@ -241,5 +240,13 @@ public class MemberService {
         member.setEmail(newEmail);
         memberRepository.save(member);
 
+    }
+
+    public void saveName(String name) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Member member = memberRepository.findByEmail(email);
+        member.setName(name);
+        memberRepository.save(member);
     }
 }
