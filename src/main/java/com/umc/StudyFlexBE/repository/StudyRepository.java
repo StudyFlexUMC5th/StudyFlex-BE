@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Long> {
     @Override
-    Optional<Study> findById(Long aLong);
+    Optional<Study> findById(Long Long);
 
     Optional<Study> findByCategory(Category category);
 

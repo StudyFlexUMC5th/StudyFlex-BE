@@ -50,22 +50,17 @@ public class StudyController {
         studyService.participation(study_id, getEmail());
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, "스터디 참여에 성공했습니다.");
     }
-
-
     @GetMapping("/latest")
     public ResponseEntity<List<Study>> getLatestStudies() {
         List<Study> latestStudies = studyService.getLatestStudies();
         return ResponseEntity.ok(latestStudies);
     }
 
-
     @GetMapping("/open")
     public ResponseEntity<List<Study>> getOpenStudies() {
         List<Study> openStudies = studyService.getOpenStudies();
         return ResponseEntity.ok(openStudies);
     }
-
-
     @GetMapping("/ranking")
     public ResponseEntity<List<Study>> getStudyRanking() {
         List<Study> rankedStudies = studyService.getRankedStudies();
