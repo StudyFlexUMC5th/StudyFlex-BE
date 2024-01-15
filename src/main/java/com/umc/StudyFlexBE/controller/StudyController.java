@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @PreAuthorize("hasAnyRole('USER')")
@@ -152,7 +153,7 @@ public class StudyController {
     @GetMapping("/{study_id}/progress")
     public BaseResponse<?> getStudyProgressList(@PathVariable Long study_id){
         try {
-            List<ProgressRes> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
+            Map<String, Object> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
             return new BaseResponse<>(BaseResponseStatus.SUCCESS, studyProgressList);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
