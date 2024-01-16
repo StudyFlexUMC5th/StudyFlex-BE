@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
 @RequestMapping("/app/studies")
 public class StudyController {
     private final StudyService studyService;
@@ -27,6 +26,7 @@ public class StudyController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> createStudy(@ModelAttribute StudyReq study){
         try {
             StudyRes studyRes = studyService.createStudy(study, getEmail());
@@ -37,6 +37,7 @@ public class StudyController {
     }
 
     @GetMapping("/checkName")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> checkDuplicateStudyName(@RequestParam String study_name){
         try {
             studyService.checkDuplicateStudyName(study_name);
@@ -47,6 +48,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/checkAuthority")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> checkAuthority(@PathVariable Long study_id){
         try{
             StudyAuthorityType studyAuthorityType = studyService.checkAuthority(study_id, getEmail());
@@ -57,6 +59,7 @@ public class StudyController {
     }
 
     @PostMapping("/{study_id}/participation")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> participation(@PathVariable Long study_id){
         try {
             StudyParticipationRes res = StudyParticipationRes.builder()
@@ -67,6 +70,8 @@ public class StudyController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    // 아래 3개는 메인 페이지에 위치하기 때문에 회원가입 안 한 사람도 볼 수 있도록
     @GetMapping("/latest")
     public BaseResponse<?> getLatestStudies() {
         try {
@@ -98,6 +103,7 @@ public class StudyController {
     }
 
     @PostMapping("/{study_id}/postNotice")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> postStudyNotice(
             @PathVariable Long study_id,
             @RequestBody @Valid StudyNoticeReq studyNoticeReq){
@@ -110,6 +116,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/notice/{notice_id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> getStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id){
         try {
             StudyNoticeRes studyNotice = studyService.getStudyNotice(study_id, notice_id, getEmail());
@@ -120,6 +127,7 @@ public class StudyController {
     }
 
     @DeleteMapping("/{study_id}/notice/{notice_id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> deleteStudyNotice(@PathVariable Long study_id, @PathVariable Long notice_id){
         try {
             studyService.deleteStudyNotice(study_id, notice_id, getEmail());
@@ -130,6 +138,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/notice")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> getStudyNotices(@PathVariable Long study_id){
         try {
             StudyNoticesInfoRes studyNotices = studyService.getStudyNotices(study_id, getEmail());
@@ -140,6 +149,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/completed")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> checkCompletedStudyWeek(@PathVariable Long study_id, @RequestParam int week){
         try {
             ProgressRes progressReq = studyService.checkCompletedStudyWeek(study_id, week, getEmail());
@@ -150,6 +160,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/progress")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> getStudyProgressList(@PathVariable Long study_id){
         try {
             Map<String, Object> studyProgressList = studyService.getStudyProgressList(study_id, getEmail());
@@ -160,6 +171,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/details")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_CERTIFIED')")
     public BaseResponse<?> getStudyDetail(@PathVariable Long study_id){
         try {
             StudyDetailRes studyDetail = studyService.getStudyDetail(study_id);

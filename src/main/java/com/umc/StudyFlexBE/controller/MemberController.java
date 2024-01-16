@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("app/member")
 @RequiredArgsConstructor
 @Slf4j
@@ -182,7 +181,6 @@ public class MemberController {
         log.info(email);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, "굿");
     }
-
     @PostMapping("clear")
     public BaseResponse<?> clearing() throws IOException {
         univCert.list(mail_api_key);

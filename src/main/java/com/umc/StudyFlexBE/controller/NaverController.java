@@ -2,11 +2,7 @@ package com.umc.StudyFlexBE.controller;
 
 import com.umc.StudyFlexBE.config.jwt.JwtTokenProvider;
 import com.umc.StudyFlexBE.dto.request.NaverDto;
-import com.umc.StudyFlexBE.dto.response.APICallException;
-import com.umc.StudyFlexBE.dto.response.BaseResponse;
-import com.umc.StudyFlexBE.dto.response.BaseResponseStatus;
-import com.umc.StudyFlexBE.dto.response.InvalidAuthorizationCodeException;
-import com.umc.StudyFlexBE.dto.response.LoginRes;
+import com.umc.StudyFlexBE.dto.response.*;
 import com.umc.StudyFlexBE.entity.Member;
 import com.umc.StudyFlexBE.entity.MsgEntity;
 import com.umc.StudyFlexBE.service.NaverService;
@@ -14,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,7 +23,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CERTIFIED','ROLE_USER')")
 @RequestMapping("/app/naver")
 public class NaverController {
 
