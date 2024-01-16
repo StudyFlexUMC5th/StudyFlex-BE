@@ -22,6 +22,7 @@ public class BaseResponse<T> {
 
     // 요청 성공
     public BaseResponse(BaseResponseStatus status, T result) {
+
         this(status);
         this.result = result;
     }
