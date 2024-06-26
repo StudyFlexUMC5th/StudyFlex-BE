@@ -17,7 +17,7 @@
 - 보안: Spring Security, JWT
 - API 클라이언트: Spring Web
 - 유효성 검사: Hibernate Validator
-- 문서화: Swagger (springdoc-openapi)
+- 문서화: Swagger (springdoc-openapi), Notion
 - 이메일 서비스: Spring Boot Starter Mail
 - 클라우드 서비스: AWS S3
 - 특화 기능: Univcert (school web mail verification)
@@ -32,20 +32,20 @@
 
 ## **📍역할**
 
-시스템 아키텍처 설계
-API 명세 및 설계, DB 테이블 설계
-서버와 DB 배포
-CI/CD 구현
-API 구현
--   소셜로그인
--   유저 관련 API 구현
--   웹메일 인증 관련 API 구현
--   신고하기 API 구현
--   공지 관련 API 구현
--   문의 관련 API 구현
--   메인페이지 스터디 관련 API 구현
--   스터디 페이지 스터디 관련 API 구현
--   스터디 내 공지사항 관련 API 구현
+- 시스템 아키텍처 설계
+- API 명세 및 설계, DB 테이블 설계
+- 서버와 DB 배포
+- CI/CD 구현
+- API 구현
+    -   소셜로그인
+    -   유저 관련 API 구현
+    -   웹메일 인증 관련 API 구현
+    -   신고하기 API 구현
+    -   공지 관련 API 구현
+    -   문의 관련 API 구현
+    -   메인페이지 스터디 관련 API 구현
+    -   스터디 페이지 스터디 관련 API 구현
+    -   스터디 내 공지사항 관련 API 구현
 
 ---
 
