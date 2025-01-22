@@ -25,11 +25,6 @@
 
 ---
 
-## **📍아키텍처**
-<img width="571" alt="스크린샷 2024-06-26 오후 1 18 02" src="https://github.com/StudyFlexUMC5th/StudyFlex-BE/assets/95922668/610ac558-f066-430b-8e83-869d0e345136">
-
----
-
 ## **📍역할**
 
 - 시스템 아키텍처 설계
